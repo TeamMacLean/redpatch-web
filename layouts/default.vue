@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-navbar>
+    <b-navbar type="is-primary">
       <template slot="brand">
         <b-navbar-item href="/">
-          <p class="heading is-size-6 has-text-primary">Redpatch</p>
+          <p class="heading is-size-6">Redpatch</p>
         </b-navbar-item>
       </template>
       <!-- <template slot="start"> -->

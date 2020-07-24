@@ -59,6 +59,11 @@ schema.methods.updateConfig = function updateConfig(newConfig, cb) {
         })
 };
 
-const Submission = mongoose.model('Submission', schema);
+let Submission
+try {
+    Submission = mongoose.model('Submission')
+} catch (error) {
+    Submission = mongoose.model('Submission', schema)
+}
 
 export default Submission

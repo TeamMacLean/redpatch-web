@@ -1,5 +1,6 @@
 <template>
   <section class="section">
+    <p>Select an image to be used as the preview for later steps.</p>
     <VueSelectImage :dataImages="images" @onselectimage="onSelectImage"></VueSelectImage>
 
     <div v-if="selected">Selected {{selected.alt}}</div>

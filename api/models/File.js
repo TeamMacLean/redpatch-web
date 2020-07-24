@@ -25,6 +25,11 @@ const schema = new mongoose.Schema({
     }
 }, { timestamps: true, toJSON: { virtuals: true } });
 
-const File = mongoose.model('File', schema);
 
+let File
+try {
+    File = mongoose.model('File')
+} catch (error) {
+    File = mongoose.model('File', schema)
+}
 export default File

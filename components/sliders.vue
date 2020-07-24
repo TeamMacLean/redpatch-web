@@ -1,41 +1,70 @@
 <template>
   <section class="section">
     <!-- <figure class="image outlined is-400x400"> -->
-    <div v-for="url in urls" class="is-inline">
-      <img :src="url" class="image outlined is-inline-block" alt="image with filter applied" style="margin-right:30px;" />
-    </div>
 
     <div class="columns">
       <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
       <div class="column">
-        <SliderSet
-          :canEdit="canEdit"
-          :onChange="onHealthyAreaChange"
-          title="healthy_area"
-          :values="healthy_area"
+        <img
+          :src="urls['original']"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
         />
       </div>
       <div class="column">
+        <img
+          :src="urls['leaf_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
         <SliderSet
           :canEdit="canEdit"
           :onChange="onLeafAreaChange"
-          title="leaf_area"
+          title="Leaf Area"
           :values="leaf_area"
         />
       </div>
       <div class="column">
+        <img
+          :src="urls['healthy_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
+        <SliderSet
+          :canEdit="canEdit"
+          :onChange="onHealthyAreaChange"
+          title="Healthy Area"
+          :values="healthy_area"
+        />
+      </div>
+      <div class="column">
+        <img
+          :src="urls['lesion_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
         <SliderSet
           :canEdit="canEdit"
           :onChange="onLesionAreaChange"
-          title="lesion_area"
+          title="Lesion Area"
           :values="lesion_area"
         />
       </div>
       <div class="column">
+        <img
+          :src="urls['scale_card']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
         <SliderSet
           :canEdit="canEdit"
           :onChange="onScaleCardChange"
-          title="scale_card"
+          title="Scale Card"
           :values="scale_card"
         />
       </div>
@@ -66,30 +95,32 @@ export default {
       leaf_area: this.submission.config.leaf_area,
       lesion_area: this.submission.config.lesion_area,
       scale_card: this.submission.config.scale_card,
-      urls: []
+      urls: [],
+      cacheKey: +new Date()
     };
   },
   methods: {
     onHealthyAreaChange(data) {
       this.healthy_area = data;
-      this.onChange();
+      this.onChange("healthy_area");
     },
     onLeafAreaChange(data) {
       this.leaf_area = data;
-      this.onChange();
+      this.onChange("leaf_area");
     },
     onLesionAreaChange(data) {
       this.lesion_area = data;
-      this.onChange();
+      this.onChange("lesion_area");
     },
     onScaleCardChange(data) {
       this.scale_card = data;
-      this.onChange();
+      this.onChange("scale_card");
     },
-    onChange() {
+    onChange(type) {
       this.canEdit = false;
       this.$axios
         .post("/api/updatehsv", {
+          type: type,
           submission: this.submission.id,
           config: {
             healthy_area: this.healthy_area,
@@ -107,7 +138,7 @@ export default {
           });
           // this.refreshImage();
 
-          return this.refreshPreviews();
+          this.refreshPreviews();
         })
         .catch(err => {
           console.error("err");
@@ -130,29 +161,31 @@ export default {
       });
 
       this.urls = res.data.urls;
+
+      this.cacheKey = +new Date();
     }
   },
   mounted() {
     this.refreshPreviews();
-    this.onChange();
-  },
-  computed: {
-    url() {
-      let file = null;
-      //get image
-      if (this.submission.previewFile) {
-        file = this.submission.previewFile;
-      } else {
-        file = this.submission.files[0];
-      }
-      const root = "/";
-      return (
-        path.join(root, file.destination, "..", "preview", file.filename) +
-        "?rnd=" +
-        this.cacheKey
-      );
-    }
+    // this.onChange();
   }
+  // computed: {
+  //   url() {
+  //     let file = null;
+  //     //get image
+  //     if (this.submission.previewFile) {
+  //       file = this.submission.previewFile;
+  //     } else {
+  //       file = this.submission.files[0];
+  //     }
+  //     const root = "/";
+  //     return (
+  //       path.join(root, file.destination, "..", "preview", file.filename) +
+  //       "?rnd=" +
+  //       this.cacheKey
+  //     );
+  //   }
+  // }
 };
 </script>
 

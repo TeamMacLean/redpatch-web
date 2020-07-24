@@ -11,18 +11,14 @@ export default function (req, res) {
 
   const uuid = queryObject && queryObject.uuid;
 
-  // console.log('params', queryObject.uuid);
 
-  console.log(queryObject, uuid);
   if (uuid) {
-    console.log('have uuid!')
     Submission.findOne({ uuid })
       .populate('files')
       .populate('previewFile')
       .fill('config')
       .exec()
       .then(submission => {
-        console.log('here', submission)
         if (submission) {
           sendOutput(res, { submission })
         } else {

@@ -1,5 +1,7 @@
 <template>
   <section class="section">
+    <h2 class="title">Cras mattis consectetur purus sit amet fermentum.</h2>
+    <p>Nullam id dolor id nibh ultricies vehicula ut id elit. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
     <b-field>
       <div ref="dashboardContainer"></div>
     </b-field>

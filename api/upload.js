@@ -109,15 +109,16 @@ export default function (req, res, next) {
                     .then(image => {
                         return new Promise((good, bad) => {
                             const newSize = calculateAspectRatioFit(image.bitmap.width, image.bitmap.height, PREVIEW_MAX_DIMENTIONS.width, PREVIEW_MAX_DIMENTIONS.height);
-                            const previewPath = path.join(previewResInputFolderPath, req.file.filename);
+                            const previewInputPath = path.join(previewResInputFolderPath, req.file.filename);
+                            const previewOutputPath = path.join(previewResOutputFolderPath, req.file.filename) + '.jpeg';
 
                             const pre = image
                                 .resize(newSize.width, newSize.height)
                                 .quality(PREVIEW_QUALITY)
 
                             Promise.all([
-                                pre.writeAsync(previewPath),
-                                // pre.writeAsync(previewOutPath),
+                                pre.writeAsync(previewInputPath),
+                                pre.writeAsync(previewOutputPath),
                             ])
                                 .then(() => {
                                     // return Promise.resolve()
