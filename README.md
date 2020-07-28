@@ -1,8 +1,18 @@
 # redpatch-web
 
+## Depends on
+* Node
+* MongoDB
+* Python
+** redpatch
+
 ## Build Setup
 
 ```bash
+
+# copy env file
+cp example.env .env
+
 # install dependencies
 $ npm install
 

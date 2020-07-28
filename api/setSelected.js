@@ -58,10 +58,8 @@ export default function (req, res) {
 
                         submission.previewFile = previewFileID;
 
-                        //TODO delete others
-
                         submission.save()
-                            .then(savedSubmission => {
+                            .then(() => {
                                 const filterFiles = submission.files.filter(f => f.id === previewFileID);
                                 if (filterFiles.length < 1) {
                                     return Promise.reject('NO FILES ATTACTICED TO SUBMISSION WITH file.id')

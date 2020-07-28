@@ -12,9 +12,21 @@ const schema = new mongoose.Schema({
     previewFile: {
         type: mongoose.Schema.Types.ObjectId, ref: 'File', required: false
     },
-    previewsGenerated: {
-        required: false,
+    preLoading: {
+        default: false,
         type: Boolean
+    },
+    preLoaded: {
+        default: false,
+        type: Boolean
+    },
+    hasScaleCard: {
+        default: false,
+        type: Boolean
+    },
+    processes: {
+        type: Array,
+        default: []
     }
 }, { timestamps: true, toJSON: { virtuals: true } });
 

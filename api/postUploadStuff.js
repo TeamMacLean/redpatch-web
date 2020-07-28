@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import Submission from './models/Submission';
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 
 function sendOutput(res, object) {
     res.setHeader('Content-Type', 'application/json');
@@ -12,13 +12,19 @@ export default function (req, res) {
 
     bodyParser.json()(req, res, function () {
 
-        const submissionID = req.body.submission;
+        const uuid = req.body.uuid;
         const hasScaleCard = req.body.hasScaleCard;
 
-        if (submissionID && previewFileID) {
-            Submission.findById(submissionID)
+        if (uuid) {
+            Submission.findOne({ uuid })
+                .populate('files')
+                .populate('previewFile')
                 .then(submission => {
                     if (submission) {
+
+                        if (submission.files.length === 1) {
+                            submission.previewFile = submission.files[0].id
+                        }
 
                         submission.hasScaleCard = hasScaleCard;
 
@@ -31,11 +37,11 @@ export default function (req, res) {
                             })
 
                     } else {
-                        return sendOutput(res, { error: 'submission does not exist' })
+                        return sendOutput(res, { error: 'uuid does not exist' })
                     }
                 })
         } else {
-            return sendOutput(res, { error: 'Did not receive "submission" AND "hasScaleCard"' })
+            return sendOutput(res, { error: 'Did not receive "uuid" AND "hasScaleCard"' })
         }
 
     })

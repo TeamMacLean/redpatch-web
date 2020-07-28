@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import path from 'path';
+// import path from 'path';
 
 import Submission from './models/Submission';
 import _generatePreview from './_generatePreview';
@@ -29,12 +29,12 @@ export default function (req, res) {
                     if (submission) {
                         let fileToUpdate = null;
 
-                        if (submission.previewFile) {
+                        // if (submission.previewFile) {
                             fileToUpdate = submission.previewFile;
-                        } else {
-                            fileToUpdate = submission.files[0];
-                            fileToUpdate.previewFile = submission.files[0];
-                        }
+                        // } else {
+                            // fileToUpdate = submission.files[0];
+                            // fileToUpdate.previewFile = submission.files[0];
+                        // }
 
 
 
@@ -48,22 +48,22 @@ export default function (req, res) {
                                     .then(savedSubmission => {
                                         savedSubmission.config = newConfig; //tmp
 
-                                        //what type to run
-                                        const inputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'input', 'preview');
-                                        const outputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'output', 'preview');
+                                        // //what type to run
+                                        // const inputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'input', 'preview');
+                                        // const outputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'output', 'preview');
 
-                                        const previewInputFile = path.join(inputFolderPath, fileToUpdate.filename);
-                                        const previewOutputFile = path.join(outputFolderPath, fileToUpdate.filename);
+                                        // const previewInputFile = path.join(inputFolderPath, fileToUpdate.filename);
+                                        // const previewOutputFile = path.join(outputFolderPath, fileToUpdate.filename);
 
                                         switch (type) {
                                             case "healthy_area":
-                                                return _generatePreview.healthyArea(previewInputFile, previewOutputFile, savedSubmission)
+                                                return _generatePreview.healthyArea(savedSubmission)
                                             case "leaf_area":
-                                                return _generatePreview.leafArea(previewInputFile, previewOutputFile, savedSubmission)
+                                                return _generatePreview.leafArea(savedSubmission)
                                             case "lesion_area":
-                                                return _generatePreview.lesionArea(previewInputFile, previewOutputFile, savedSubmission)
+                                                return _generatePreview.lesionArea(savedSubmission)
                                             case "scale_card":
-                                                return _generatePreview.scaleCard(previewInputFile, previewOutputFile, savedSubmission)
+                                                return _generatePreview.scaleCard(savedSubmission)
                                         }
 
                                         // return 

@@ -1,6 +1,6 @@
 import url from 'url';
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 import Submission from './models/Submission';
 
 function sendOutput(res, object) {

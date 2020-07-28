@@ -1,11 +1,17 @@
 <template>
   <div class="container">
-    <!-- {{uuid}} -->
     <div v-if="showUploader">
       <Upload @oncompletion="onUploadCompletion" :uuid="uuid" />
     </div>
     <div v-if="showPicker">
       <SelectImage :submission="submission" @oncompletion="onPickerCompletion" />
+    </div>
+    <div v-if="showPreLoading">
+      <GeneratingPreviews
+        :submission="submission"
+        @oncompletion="onPreLoadCompleting"
+        :linkBack="linkBack"
+      />
     </div>
     <div v-if="showSliders">
       <Sliders :submission="submission" />
@@ -19,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 import Upload from "~/components/upload";
 import SelectImage from "~/components/selectImage";
 import Sliders from "~/components/sliders";
+import GeneratingPreviews from "~/components/generatingPreviews";
 
 function processHash(hash) {
   const splitted = hash.split("#");
@@ -38,13 +45,18 @@ async function _refresh(axios, uuid) {
   let showUploader = false;
   let showPicker = false;
   let showSliders = false;
+  let showPreLoading = false;
 
   const submission = res.data && res.data.submission;
   if (submission && submission.files) {
     showUploader = false;
     if (submission.files.length === 1 || submission.previewFile) {
-      showPicker = false;
-      showSliders = true;
+      if (submission.preLoaded) {
+        showPicker = false;
+        showSliders = true;
+      } else {
+        showPreLoading = true;
+      }
     } else {
       showPicker = true;
     }
@@ -58,11 +70,12 @@ async function _refresh(axios, uuid) {
     showPicker: showPicker,
     showSliders: showSliders,
     submission: submission,
+    showPreLoading: showPreLoading,
   };
 }
 
 export default {
-  components: { Upload, SelectImage, Sliders },
+  components: { Upload, SelectImage, Sliders, GeneratingPreviews },
   asyncData({ $axios, route }) {
     //TODO check for hash
     const hash = (route && route.hash && processHash(route.hash)) || uuidv4();
@@ -75,6 +88,7 @@ export default {
       showPicker: false,
       showSliders: false,
       submission: null,
+      showPreLoading: false,
     };
   },
   methods: {
@@ -86,20 +100,39 @@ export default {
       });
     },
     async onUploadCompletion({ hasScaleCard }) {
-      //TODO update hasScalecard
-      const res = await this.$axios.post("/api/setHasScaleCard", {
-        submission: this.submission.id,
-        hasScaleCard: hasScaleCard,
-      });
+      //TODO post upload stuff
+      //set submission.previewFile if only one image
 
-      console.log('res',res);
+      this.$axios
+        .post("/api/postUploadStuff", {
+          uuid: this.uuid,
+          hasScaleCard: hasScaleCard,
+        })
+        .then(() => {
+          history.pushState(
+            {},
+            null,
+            this.$route.path + "#" + encodeURIComponent(this.uuid)
+          );
+          return this.refresh();
+        });
 
-      history.pushState(
-        {},
-        null,
-        this.$route.path + "#" + encodeURIComponent(this.uuid)
-      );
-      return this.refresh();
+      // //TODO update hasScalecard
+      // this.$axios
+      //   .post("/api/setHasScaleCard", {
+      //     uuid: this.uuid,
+      //     hasScaleCard: hasScaleCard,
+      //   })
+      //   .then(() => {
+      //     history.pushState(
+      //       {},
+      //       null,
+      //       this.$route.path + "#" + encodeURIComponent(this.uuid)
+      //     );
+      //     return this.refresh();
+      //   });
+
+      // return this.refresh();
     },
     onPickerCompletion(selected) {
       //TODO notify API of selected image
@@ -111,6 +144,13 @@ export default {
         .then(() => {
           this.refresh();
         });
+    },
+    onPreLoadCompleting() {},
+  },
+  computed: {
+    linkBack() {
+      console.log("linkBack", process.env.BASE_URL);
+      return `${process.env.BASE_URL}/${this.$route.hash}`;
     },
   },
 };

@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 
 import serveStatic from 'serve-static'
 const mongoose = require('mongoose-fill');
@@ -51,8 +51,8 @@ export default {
     '/api/setselected': '~/api/setSelected.js',
     '/api/updatehsv': '~/api/updateHsv.js',
     '/api/previews': '~/api/getPreviews.js',
-    '/api/setHasScaleCard': '~/api/setHasScaleCard.js'
-    // '/api/preview': '~/api/preview.js',
+    '/api/postUploadStuff': '~/api/postUploadStuff.js',
+    '/api/ensurepreloading': '~/api/ensurePreLoading.js',
   },
   /*
   ** Auto import components
@@ -72,6 +72,7 @@ export default {
     'nuxt-buefy',
     '@nuxtjs/pwa',
     '@nuxtjs/axios',
+    '@nuxtjs/dotenv'
   ],
   axios: {
     // proxyHeaders: false,

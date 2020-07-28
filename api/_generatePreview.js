@@ -4,41 +4,62 @@ import { PythonShell } from 'python-shell';
 
 // import config from './_config';
 
-function _run(scriptPath, inputFile, outputFile, submission) {
+function _run(scriptPath, filePostfix, submission) {
     return new Promise((good, bad) => {
 
         const configPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'config.yaml')
+
+
+        //what type to run
+        const inputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'input', 'preview');
+        const outputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'output', 'preview');
+
+        const previewInputFile = path.join(inputFolderPath, submission.previewFile.filename);
+        const previewOutputFile = path.join(outputFolderPath, submission.previewFile.filename) + filePostfix;
+
 
         let options = {
             mode: 'text',
             pythonPath: process.env.PYTHON,
             pythonOptions: ['-u'], // get print results in real-time
             scriptPath: __dirname,
-            args: [inputFile, outputFile, configPath]
+            args: [previewInputFile, previewOutputFile, configPath]
         };
 
-        console.log('in', inputFile, 'out', outputFile)
-        PythonShell.run(scriptPath, options, function (err, results) {
+        const pythonShell = PythonShell.run(scriptPath, options, function (err, results) {
             if (err) {
                 bad(err)
             } else {
                 good(results)
             }
         });
+
+        console.log('TODO: childProcess',)
+
+        if (!submission.processes) {
+            submission.processes = [];
+        }
+        submission.processes.push(pythonShell.childProcess.pid)
+        submission.save();
+
+        //TODO 
+
+        // pythonShell.childProcess
+        // submission.
     })
 }
 
-function healthyArea(inputFile, outputFile, submission) {
-    return _run("_get_healthy_regions.py", inputFile, outputFile + "_healthy_area.jpeg", submission)
+function healthyArea(submission) {
+    return _run("_get_healthy_regions.py", "_healthy_area.jpeg", submission)
 }
-function leafArea(inputFile, outputFile, submission) {
-    return _run("_get_leaf_regions.py", inputFile, outputFile + "_leaf_area.jpeg", submission)
+function leafArea(submission) {
+    return _run("_get_leaf_regions.py", "_leaf_area.jpeg", submission)
 }
-function lesionArea(inputFile, outputFile, submission) {
-    return _run("_get_lesion_regions.py", inputFile, outputFile + "_lesion_area.jpeg", submission)
+function lesionArea(submission) {
+    return _run("_get_lesion_regions.py", "_lesion_area.jpeg", submission)
 }
-function scaleCard(inputFile, outputFile, submission) {
-    return _run("_get_scale_card.py", inputFile, outputFile + "_scale_card.jpeg", submission)
+function scaleCard(submission) {
+    return _run("_get_scale_card.py", "_scale_card.jpeg", submission)
 }
 
 export default { healthyArea, leafArea, lesionArea, scaleCard }
