@@ -1,9 +1,13 @@
 <template>
   <section class="section">
-    <p>Select an image to be used as the preview for later steps.</p>
+    <div class="content">
+      <p>These are your uploaded images. Please select one to use for parameter estimation, then press "Move on"</p>
+    </div>
     <VueSelectImage :dataImages="images" @onselectimage="onSelectImage"></VueSelectImage>
 
-    <div v-if="selected">Selected {{selected.alt}}</div>
+    <div class="content">
+      <div v-if="selected">Selected {{selected.alt}}</div>
+    </div>
     <div class="buttons">
       <b-button type="is-primary" :disabled="!canMoveOn" @click="moveOn">Move on</b-button>
     </div>
@@ -20,18 +24,18 @@ export default {
   data() {
     const root = "/";
 
-    const images = this.submission.files.map(file => {
+    const images = this.submission.files.map((file) => {
       return {
         id: file.id,
         src: path.join(root, file.destination, "..", "preview", file.filename),
-        alt: file.originalname
+        alt: file.originalname,
       };
     });
 
     return {
       images: images,
       selected: null,
-      canMoveOn: false
+      canMoveOn: false,
     };
   },
   components: { VueSelectImage },
@@ -43,7 +47,7 @@ export default {
     },
     moveOn() {
       this.$emit("oncompletion", { selected: this.selected });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -50,7 +50,8 @@ export default {
     '/api/status': '~/api/status.js',
     '/api/setselected': '~/api/setSelected.js',
     '/api/updatehsv': '~/api/updateHsv.js',
-    '/api/previews': '~/api/getPreviews.js'
+    '/api/previews': '~/api/getPreviews.js',
+    '/api/setHasScaleCard': '~/api/setHasScaleCard.js'
     // '/api/preview': '~/api/preview.js',
   },
   /*

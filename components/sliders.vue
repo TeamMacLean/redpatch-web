@@ -2,6 +2,11 @@
   <section class="section">
     <!-- <figure class="image outlined is-400x400"> -->
 
+    <p>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</p>
+    <p>If you have selected a scale card please remember to add the side length in centimetres.</p>
+    <p>Click "Process all images" to apply the settings.</p>
+    <p>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</p>
+    <p>If you have previously saved settings, upload them using "Upload config"</p>
     <div class="columns">
       <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
       <div class="column">
@@ -66,10 +71,14 @@
           :onChange="onScaleCardChange"
           title="Scale Card"
           :values="scale_card"
-        />
+        />scale size in cm input box here
+        <input type="number" min="0" max="9999" />
       </div>
     </div>
 
+    <br />
+    <br />
+    <br />
     <div class="buttons">
       <b-button type="is-primary">Process all images</b-button>
       <b-button type="is-primary">Download config</b-button>
@@ -96,7 +105,7 @@ export default {
       lesion_area: this.submission.config.lesion_area,
       scale_card: this.submission.config.scale_card,
       urls: [],
-      cacheKey: +new Date()
+      cacheKey: +new Date(),
     };
   },
   methods: {
@@ -126,27 +135,27 @@ export default {
             healthy_area: this.healthy_area,
             leaf_area: this.leaf_area,
             lesion_area: this.lesion_area,
-            scale_card: this.scale_card
-          }
+            scale_card: this.scale_card,
+          },
         })
-        .then(res => {
+        .then((res) => {
           // console.log(res.data);
           this.$buefy.snackbar.open({
             message: `Successfully updated value to server`,
             queue: false,
-            actionText: null
+            actionText: null,
           });
           // this.refreshImage();
 
           this.refreshPreviews();
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("err");
           this.$buefy.toast.open({
             duration: 5000,
             message: err,
             position: "is-top",
-            type: "is-danger"
+            type: "is-danger",
           });
         })
         .finally(() => {
@@ -156,19 +165,19 @@ export default {
     async refreshPreviews() {
       const res = await this.$axios.get("/api/previews", {
         params: {
-          uuid: this.submission.uuid
-        }
+          uuid: this.submission.uuid,
+        },
       });
 
       this.urls = res.data.urls;
 
       this.cacheKey = +new Date();
-    }
+    },
   },
   mounted() {
     this.refreshPreviews();
     // this.onChange();
-  }
+  },
   // computed: {
   //   url() {
   //     let file = null;

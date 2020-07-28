@@ -32,8 +32,8 @@ function processHash(hash) {
 async function _refresh(axios, uuid) {
   const res = await axios.get("/api/status", {
     params: {
-      uuid: uuid
-    }
+      uuid: uuid,
+    },
   });
   let showUploader = false;
   let showPicker = false;
@@ -52,15 +52,12 @@ async function _refresh(axios, uuid) {
     showUploader = true;
   }
 
-  console.log("showUploader", showUploader);
-  console.log("showPicker", showPicker);
-  console.log("showSliders", showSliders);
   return {
     uuid: uuid,
     showUploader: showUploader,
     showPicker: showPicker,
     showSliders: showSliders,
-    submission: submission
+    submission: submission,
   };
 }
 
@@ -77,18 +74,26 @@ export default {
       showUploader: true,
       showPicker: false,
       showSliders: false,
-      submission: null
+      submission: null,
     };
   },
   methods: {
     async refresh() {
       const output = await _refresh(this.$axios, this.uuid);
       //TODO this is pretty hacky, find a better way.
-      Object.keys(output).map(key => {
+      Object.keys(output).map((key) => {
         this[key] = output[key];
       });
     },
-    onUploadCompletion() {
+    async onUploadCompletion({ hasScaleCard }) {
+      //TODO update hasScalecard
+      const res = await this.$axios.post("/api/setHasScaleCard", {
+        submission: this.submission.id,
+        hasScaleCard: hasScaleCard,
+      });
+
+      console.log('res',res);
+
       history.pushState(
         {},
         null,
@@ -101,12 +106,12 @@ export default {
       return this.$axios
         .post("/api/setselected", {
           submission: this.submission.id,
-          file: selected.selected.id
+          file: selected.selected.id,
         })
         .then(() => {
           this.refresh();
         });
-    }
-  }
+    },
+  },
 };
 </script>

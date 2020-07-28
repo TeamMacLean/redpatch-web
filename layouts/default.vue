@@ -2,13 +2,14 @@
   <div>
     <b-navbar type="is-primary">
       <template slot="brand">
-        <b-navbar-item href="/">
+        <a href="/" class="navbar-item">
           <p class="heading is-size-6">Redpatch</p>
-        </b-navbar-item>
+        </a>
       </template>
-      <!-- <template slot="start"> -->
-      <!-- <b-navbar-item href="#">Documentation</b-navbar-item> -->
-      <!-- </template> -->
+      <template slot="start">
+        <nuxt-link to="/faq" class="navbar-item">FAQ</nuxt-link>
+        <nuxt-link to="/credits" class="navbar-item">Credits</nuxt-link>
+      </template>
 
       <template slot="end">
         <a class="bd-navbar-icon navbar-item has-text-black">

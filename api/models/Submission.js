@@ -1,8 +1,8 @@
 const mongoose = require('mongoose-fill')
 
 import config from '../_config';
-import path from 'path';
-import fs from 'fs';
+// import path from 'path';
+// import fs from 'fs';
 
 const schema = new mongoose.Schema({
     uuid: {
@@ -12,6 +12,10 @@ const schema = new mongoose.Schema({
     previewFile: {
         type: mongoose.Schema.Types.ObjectId, ref: 'File', required: false
     },
+    previewsGenerated: {
+        required: false,
+        type: Boolean
+    }
 }, { timestamps: true, toJSON: { virtuals: true } });
 
 
