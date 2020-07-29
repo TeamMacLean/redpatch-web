@@ -9,6 +9,10 @@ try {
 }
 
 export default {
+  server: {
+    port: process.env.PORT, // default: 3000
+    host: process.env.HOST // default: localhost
+  },
   /*
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
