@@ -20,6 +20,21 @@ const schema = new mongoose.Schema({
         default: false,
         type: Boolean
     },
+    processingPID: {
+        type: String
+    },
+    processingAll: {
+        default: false,
+        type: Boolean
+    },
+    processedAll: {
+        default: false,
+        type: Boolean
+    },
+    scaleCM: {
+        type: Number,
+        default: 0
+    },
     hasScaleCard: {
         default: false,
         type: Boolean
@@ -30,7 +45,7 @@ const schema = new mongoose.Schema({
     healthyAreaPID: {
         type: String
     },
-    legionAreaPID: {
+    lesionAreaPID: {
         type: String
     },
     scaleCardPID: {

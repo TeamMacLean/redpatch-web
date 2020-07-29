@@ -3,15 +3,13 @@ import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 
-
 import File from './models/File';
 import Submission from './models/Submission'
 import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 
-
-const PREVIEW_MAX_DIMENTIONS = { width: 1600, height: 1600 }
-const PREVIEW_QUALITY = 100
+const PREVIEW_MAX_DIMENTIONS = { width: 400, height: 400 }
+// const PREVIEW_MAX_DIMENTIONS = { width: 1600, height: 1600 }
 
 function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
     var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
@@ -41,10 +39,10 @@ export default function (req, res, next) {
 
         // const fileDestination = path.join('uploads', uuid, 'input');
         const fullResDestination = path.join('uploads', uuid, 'input', 'full');
-        const inputFolderPath = path.join(__dirname, '..', 'uploads', uuid, 'input')
-        const fullResInputFolderPath = path.join(inputFolderPath, 'full')
-        const previewResInputFolderPath = path.join(inputFolderPath, 'preview')
-        const outputFolderPath = path.join(__dirname, '..', 'uploads', uuid, 'output')
+        const inputFolderPath = path.join(__dirname, '..', 'uploads', uuid, 'input');
+        const fullResInputFolderPath = path.join(inputFolderPath, 'full');
+        const previewResInputFolderPath = path.join(inputFolderPath, 'preview');
+        const outputFolderPath = path.join(__dirname, '..', 'uploads', uuid, 'output');
 
         const fullResOutputFolderPath = path.join(outputFolderPath, 'full')
         const previewResOutputFolderPath = path.join(outputFolderPath, 'preview')

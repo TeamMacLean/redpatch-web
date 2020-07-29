@@ -24,21 +24,21 @@ export default function (req, res) {
 
                             submission.preLoading = true;
                             submission.save()
-                            .then(()=>{
-                                //start preloading then instantly send response (let it run in bg)
-                                _runPreLoad(submission)
                                 .then(() => {
-                                    console.log('DONE preload')
-                                    //TODO should we do anything here?
+                                    //start preloading then instantly send response (let it run in bg)
+                                    _runPreLoad(submission)
+                                        .then(() => {
+                                            console.log('DONE preload')
+                                            //TODO should we do anything here?
+                                        })
+                                        .catch(err => {
+                                            console.error(err);
+                                        })
+                                    sendOutput(res, { submission })
                                 })
                                 .catch(err => {
-                                    console.error(err);
+                                    sendOutput(res, { error: err })
                                 })
-                                sendOutput(res, { submission })
-                            })
-                            .catch(err => {
-                                sendOutput(res, { error: err })
-                            })
 
 
                             //START IT!
@@ -61,6 +61,27 @@ export default function (req, res) {
                             //         sendOutput(res, { error: err })
                             //     })
                         } else {
+
+                            //TODO is it tho!?
+                            //IS IT THO!?
+                            const reallyRunningLeaf = isRunning(submission.leafAreaPID);
+                            const reallyRunningHealthy = isRunning(submission.healthyAreaPID);
+                            const reallyRunningLesion = isRunning(submission.lesionAreaPID);
+                            const reallyRunningScaleCard = submission.hasScaleCard && isRunning(submission.scaleCardPID);
+
+                            if (!reallyRunningLeaf && !reallyRunningHealthy && !reallyRunningLesion && !reallyRunningScaleCard) {
+                                //not really running, making it so!
+                                _runPreLoad(submission)
+                                    .then(() => {
+                                        console.log('DONE preload')
+                                        //TODO should we do anything here?
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                    })
+                            }
+
+
                             sendOutput(res, { submission })
                         }
 

@@ -22,7 +22,7 @@ export default function (req, res) {
         if (submission) {
           sendOutput(res, { submission })
         } else {
-          sendOutput(res, {})
+          sendOutput(res, { error: 'no such submission' })
         }
       })
       .catch(err => {

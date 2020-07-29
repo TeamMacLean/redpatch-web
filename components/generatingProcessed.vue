@@ -2,9 +2,7 @@
   <div class="section">
     <div class="container">
       <b-notification :closable="false">
-        <p class="title
-        ">Please wait while we generate the previews.</p>
-        If the images are very large this can take a while.
+        <p class="title">Please wait while we generate the processed images.</p>If the images are very large this can take a while.
         If you don’t want to wait, you can access this page and keep your progress using this link
         <a
           :href="linkBack"
@@ -25,7 +23,16 @@ export default {
   },
   methods: {
     ensureLoading() {
-      this.$axios.post("/api/ensurepreloading", { uuid: this.submission.uuid });
+      this.$axios
+        .post("/api/ensureProcessing", { submission: this.submission.id })
+        .then(({ data }) => {
+          if (data && data.error) {
+            console.error(data.error);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     pollData() {
       this.polling = setInterval(() => {
@@ -38,14 +45,14 @@ export default {
           .then(({ data }) => {
             console.log(
               "data",
-              data.submission.preLoading,
-              data.submission.preLoaded
+              data.submission.processingAll,
+              data.submission.processedAll
             );
 
             if (data && data.submission) {
-              console.log('has data and submission')
-              if (data.submission.preLoaded) {
-                console.log('is preloaded, emitting')
+              console.log("has data and submission");
+              if (data.submission.processedAll) {
+                console.log("is preloaded, emitting");
                 return this.$emit("oncompletion");
               }
             }
@@ -53,8 +60,6 @@ export default {
           .catch((err) => {
             console.error(err);
           });
-
-        // this.$store.dispatch("RETRIEVE_DATA_FROM_BACKEND");
       }, 1000);
     },
   },
@@ -65,10 +70,10 @@ export default {
     this.ensureLoading();
     this.pollData();
   },
-  computed:{
+  computed: {
     linkBack() {
       return `${process.env.BASE_URL}/${this.submission.uuid}`;
     },
-  }
+  },
 };
 </script>

@@ -11,11 +11,11 @@
         <nuxt-link to="/credits" class="navbar-item">Credits</nuxt-link>
       </template>
 
-      <template slot="end">
+      <!-- <template slot="end">
         <a class="bd-navbar-icon navbar-item has-text-black">
           <b-icon icon="github"></b-icon>
         </a>
-      </template>
+      </template> -->
     </b-navbar>
     <nuxt />
   </div>

@@ -2,7 +2,7 @@
   <div class="section">
     <div class="container">
       <h1 class="title">FAQ</h1>
-      <br/>
+      <br />
       <div class="content">
         <p class="title is-4">Why does it take so long to process my images?</p>
         <p>Redpatch needs to go through every pixel of your image. The bigger the image you upload the longer it takes. There isn’t a significant accuracy increase as the image size goes over about 2 Megapixels. Try reducing the size of your images if you want redpatch to work faster</p>
@@ -20,18 +20,34 @@
       <br />
       <div class="content">
         <p class="title is-4">Can I run redpatch on my own computer?</p>
-        <p>Yep, redpatch is available as a Python package and batch scripts at https://github.com/TeamMacLean/redpatch</p>
+        <p>
+          Yep, redpatch is available as a Python package and batch scripts at
+          <a href="https://github.com/TeamMacLean/redpatch">https://github.com/TeamMacLean/redpatch</a>
+        </p>
       </div>
       <br />
       <div class="content">
         <p class="title is-4">Who can I contact with questions?</p>
-        <p>Please email bioinformatics@tsl.ac.uk</p>
+        <p>
+          Please email
+          <a href="mailto:bioinformatics@tsl.ac.uk">bioinformatics@tsl.ac.uk</a>
+        </p>
       </div>
       <br />
       <div class="content">
         <p class="title is-4">How do I cite redpatch?</p>
-        <p>Thanks for asking and remembering that bioinformatics software is research too. Cite TODO</p>
+        <p>
+          Thanks for asking and remembering that bioinformatics software is research too
+          <CiteBadge />
+        </p>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import CiteBadge from "~/components/_cite_badge";
+export default {
+  components: { CiteBadge },
+};
+</script>

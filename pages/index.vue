@@ -7,13 +7,13 @@
       <SelectImage :submission="submission" @oncompletion="onPickerCompletion" />
     </div>
     <div v-if="showPreLoading">
-      <GeneratingPreviews
-        :submission="submission"
-        @oncompletion="onPreLoadCompleting"
-      />
+      <GeneratingPreviews :submission="submission" @oncompletion="onPreLoadCompleting" />
     </div>
     <div v-if="showSliders">
-      <Sliders :submission="submission" />
+      <Sliders :submission="submission" @oncompletion="onSlidersCompletion" />
+    </div>
+    <div v-if="showProcessing">
+      <GeneratingProcessed :submission="submission" />
     </div>
   </div>
 </template>
@@ -25,6 +25,8 @@ import Upload from "~/components/upload";
 import SelectImage from "~/components/selectImage";
 import Sliders from "~/components/sliders";
 import GeneratingPreviews from "~/components/generatingPreviews";
+import GeneratingProcessed from "~/components/generatingProcessed";
+import Results from "~/components/results";
 
 function processHash(hash) {
   const splitted = hash.split("#");
@@ -45,14 +47,22 @@ async function _refresh(axios, uuid) {
   let showPicker = false;
   let showSliders = false;
   let showPreLoading = false;
+  let showProcessing = false;
+  let showResults = false;
 
   const submission = res.data && res.data.submission;
   if (submission && submission.files) {
     showUploader = false;
     if (submission.files.length === 1 || submission.previewFile) {
       if (submission.preLoaded) {
-        showPicker = false;
-        showSliders = true;
+        if (submission.processingAll) {
+          showProcessing = true;
+        } else if (submission.processedAll) {
+          showResults = true;
+        } else {
+          showPicker = false;
+          showSliders = true;
+        }
       } else {
         showPreLoading = true;
       }
@@ -70,11 +80,20 @@ async function _refresh(axios, uuid) {
     showSliders: showSliders,
     submission: submission,
     showPreLoading: showPreLoading,
+    showProcessing: showProcessing,
+    showResults: showResults,
   };
 }
 
 export default {
-  components: { Upload, SelectImage, Sliders, GeneratingPreviews },
+  components: {
+    Upload,
+    SelectImage,
+    Sliders,
+    GeneratingPreviews,
+    GeneratingProcessed,
+    Results,
+  },
   asyncData({ $axios, route }) {
     //TODO check for hash
     const hash = (route && route.hash && processHash(route.hash)) || uuidv4();
@@ -115,23 +134,6 @@ export default {
           );
           return this.refresh();
         });
-
-      // //TODO update hasScalecard
-      // this.$axios
-      //   .post("/api/setHasScaleCard", {
-      //     uuid: this.uuid,
-      //     hasScaleCard: hasScaleCard,
-      //   })
-      //   .then(() => {
-      //     history.pushState(
-      //       {},
-      //       null,
-      //       this.$route.path + "#" + encodeURIComponent(this.uuid)
-      //     );
-      //     return this.refresh();
-      //   });
-
-      // return this.refresh();
     },
     onPickerCompletion(selected) {
       //TODO notify API of selected image
@@ -147,12 +149,15 @@ export default {
     onPreLoadCompleting() {
       return this.refresh();
     },
+    onSlidersCompletion() {
+      return this.$axios
+        .post("/api/setProcessing", {
+          submission: this.submission.id,
+        })
+        .then(() => {
+          this.refresh();
+        });
+    },
   },
-  // computed: {
-  //   linkBack() {
-  //     console.log("linkBack", process.env.BASE_URL);
-  //     return `${process.env.BASE_URL}/${this.$route.hash}`;
-  //   },
-  // },
 };
 </script>

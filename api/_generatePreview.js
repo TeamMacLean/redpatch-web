@@ -1,5 +1,4 @@
 import path from 'path';
-// import execa from 'execa';
 import { PythonShell } from 'python-shell';
 
 // import config from './_config';
@@ -49,32 +48,12 @@ function leafArea(submission) {
     return _run("_get_leaf_regions.py", "_leaf_area.jpeg", submission, 'healthyAreaPID')
 }
 function lesionArea(submission) {
-    return _run("_get_lesion_regions.py", "_lesion_area.jpeg", submission, 'legionAreaPID')
+    return _run("_get_lesion_regions.py", "_lesion_area.jpeg", submission, 'lesionAreaPID')
 }
 function scaleCard(submission) {
     return _run("_get_scale_card.py", "_scale_card.jpeg", submission, 'scaleCardPID')
 }
 
 export default { healthyArea, leafArea, lesionArea, scaleCard }
-
-// function run(fileInPath, fileOutPath, submission) {
-
-//     const configPath = config.getPath(submission.uuid)
-
-//     return new Promise((good, bad) => {
-//         const args = ['--source_folder', `${fileInPath}`, '--destination_folder', `${fileOutPath}`, '--filter_settings', `${configPath}`]
-//         //--source_folder ~/Desktop/single_image --destination_folder ~/Desktop/test_out --filter_settings ~/Desktop/default_filter.yml
-//         console.log('starting preview', args)
-//         execa(process.env.BATCH_PROCESS_PATH, args)
-//             .then((out) => {
-//                 console.log('DONE!', out)
-//                 good(out);
-//             })
-//             .catch(err => {
-//                 console.error('err!', err);
-//                 bad(err)
-//             })
-//     })
-// }
 
 

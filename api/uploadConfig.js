@@ -13,9 +13,6 @@ export default function (req, res, next) {
         const uuid = req.headers['redpatch-id'];
         const file = req.file;
 
-        console.log(uuid, file)
-
-
         //TODO parse config file
         const pathToFile = path.join(__dirname, '..', 'uploads', 'configs', file.filename);
 
@@ -47,11 +44,9 @@ export default function (req, res, next) {
 
             })
             .then((foundSubmission) => {
-                console.log('running preload')
                 return _runPreLoad(foundSubmission)
             })
             .then(() => {
-                console.log('returning')
                 //TODO reload everything!
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({ success: true }, null, 3));

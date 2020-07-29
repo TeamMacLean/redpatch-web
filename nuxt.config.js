@@ -57,7 +57,10 @@ export default {
     '/api/previews': '~/api/getPreviews.js',
     '/api/postUploadStuff': '~/api/postUploadStuff.js',
     '/api/ensurepreloading': '~/api/ensurePreLoading.js',
-    '/api/uploadConfig': '~/api/uploadConfig.js'
+    '/api/uploadConfig': '~/api/uploadConfig.js',
+    '/api/setProcessing': '~/api/setProcessing.js',
+    '/api/ensureProcessing': '~/api/ensureProcessing.js',
+    '/api/setScaleCM': '~/api/setScaleCM.js',
   },
   /*
   ** Auto import components
