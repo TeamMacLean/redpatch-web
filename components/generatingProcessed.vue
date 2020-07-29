@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     linkBack() {
-      return `${process.env.BASE_URL}/${this.submission.uuid}`;
+      return `${process.env.BASE_URL}/#${this.submission.uuid}`;
     },
   },
 };

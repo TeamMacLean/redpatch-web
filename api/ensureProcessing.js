@@ -53,8 +53,6 @@ export default function (req, res) {
                             if(!reallyRunning){
                                 //ISSUE!
                                 console.log('it wasnt really running, making it so!')
-                                const test = _runProcessAll(submission);
-                                console.log('test', test)
                                 _runProcessAll(submission)
                                         .then(() => {
                                             console.log('DONE processing')
