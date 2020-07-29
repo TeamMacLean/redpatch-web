@@ -1,4 +1,5 @@
-import jimp from 'jimp';
+// import jimp from 'jimp';
+import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 
@@ -9,12 +10,12 @@ import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 
 
-const PREVIEW_MAX_DIMENTIONS = { width: 400, height: 400 }
+const PREVIEW_MAX_DIMENTIONS = { width: 1600, height: 1600 }
 const PREVIEW_QUALITY = 100
 
 function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
     var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
-    return { width: srcWidth * ratio, height: srcHeight * ratio };
+    return { width: Math.round(srcWidth * ratio), height: Math.round(srcHeight * ratio) };
 }
 
 function findOrMakeSubmission(uuid) {
@@ -105,40 +106,51 @@ export default function (req, res, next) {
                 return findOrMakeSubmission(uuid)
             })
             .then(submission => {
-                return jimp.read(newPath)
-                    .then(image => {
-                        return new Promise((good, bad) => {
-                            const newSize = calculateAspectRatioFit(image.bitmap.width, image.bitmap.height, PREVIEW_MAX_DIMENTIONS.width, PREVIEW_MAX_DIMENTIONS.height);
-                            const previewInputPath = path.join(previewResInputFolderPath, req.file.filename);
-                            const previewOutputPath = path.join(previewResOutputFolderPath, req.file.filename) + '.jpeg';
+                const image = sharp(newPath);
+                return image.metadata()
+                    .then(imageMetadata => {
 
-                            const pre = image
-                                .resize(newSize.width, newSize.height)
-                                .quality(PREVIEW_QUALITY)
+                        const newSize = calculateAspectRatioFit(imageMetadata.width, imageMetadata.height, PREVIEW_MAX_DIMENTIONS.width, PREVIEW_MAX_DIMENTIONS.height);
+                        const previewInputPath = path.join(previewResInputFolderPath, req.file.filename);
+                        const previewOutputPath = path.join(previewResOutputFolderPath, req.file.filename) + '.jpeg';
 
-                            Promise.all([
-                                pre.writeAsync(previewInputPath),
-                                pre.writeAsync(previewOutputPath),
-                            ])
-                                .then(() => {
-                                    // return Promise.resolve()
-                                    return new File({
-                                        originalname: req.file.originalname,
-                                        destination: fullResDestination,
-                                        filename: req.file.filename,
-                                        path: path.join(fullResDestination, req.file.filename),
-                                        submission: submission.id,
-                                        mimetype: req.file.mimetype,
-                                    }).save()
-                                })
-                                .then(savedFile => {
-                                    return good(savedFile)
-                                })
-                                .catch(err => {
-                                    return bad(err);
-                                })
-                        })
+                        const pre = image
+                            .resize({ width: newSize.width, height: newSize.height })
+
+                        Promise.all([
+                            new Promise((good, bad) => {
+                                pre.toFile(previewInputPath, (err, info) => {
+                                    if (err) {
+                                        bad(err);
+                                    } else {
+                                        good()
+                                    }
+                                });
+                            }),
+                            new Promise((good, bad) => {
+                                pre.toFile(previewOutputPath, (err, info) => {
+                                    if (err) {
+                                        bad(err);
+                                    } else {
+                                        good()
+                                    }
+                                });
+                            })
+                        ])
+                            .then(() => {
+                                return new File({
+                                    originalname: req.file.originalname,
+                                    destination: fullResDestination,
+                                    filename: req.file.filename,
+                                    path: path.join(fullResDestination, req.file.filename),
+                                    submission: submission.id,
+                                    mimetype: req.file.mimetype,
+                                }).save()
+                            })
                     })
+
+
+
             })
             .then(savedFile => {
                 res.setHeader('Content-Type', 'application/json');
@@ -150,12 +162,5 @@ export default function (req, res, next) {
             })
 
     })
-
-
-
-    // res is the Node.js http response object
-
-    // next is a function to call to invoke the next middleware
-    // Don't forget to call next at the end if your middleware is not an endpoint!
 
 }

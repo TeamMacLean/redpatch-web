@@ -3,7 +3,7 @@ import _generatePreview from './_generatePreview';
 export default (submission) => {
 
 
-    _generatePreview.leafArea(submission).then(() => {
+    return _generatePreview.leafArea(submission).then(() => {
         return _generatePreview.healthyArea(submission)
     })
         .then(() => {

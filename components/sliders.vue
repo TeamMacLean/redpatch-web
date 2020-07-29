@@ -80,8 +80,30 @@
     <br />
     <br />
     <div class="buttons">
-      <b-button type="is-primary" >Process all images</b-button>
-      <b-button type="is-primary" tag="a" :href="configDownloadURL" download="redpatch-config.yaml">Download config</b-button>
+      <!-- <b-upload ref="customConfigInput" :native="true" @change="onCustomConfigSelect()">
+        <a class="button is-primary">
+          <b-icon icon="upload"></b-icon>
+          <span>Upload config</span>
+        </a>
+      </b-upload>-->
+      <label class="upload control">
+        <a class="button is-primary">
+          <span class="icon">
+            <i class="mdi mdi-upload mdi-24px"></i>
+          </span>
+          <span>Upload config</span>
+        </a>
+        <input type="file" ref="customConfigInput" @change="onCustomConfigSelect()" />
+      </label>
+      <!-- <span class="file-name" v-if="uploadCustomConfigFile">{{ uploadCustomConfigFile.name }}</span> -->
+
+      <b-button
+        type="is-primary"
+        tag="a"
+        :href="configDownloadURL"
+        download="redpatch-config.yaml"
+      >Download config</b-button>
+      <b-button type="is-primary">Process all images</b-button>
     </div>
   </section>
 </template>
@@ -109,6 +131,46 @@ export default {
     };
   },
   methods: {
+    onCustomConfigSelect() {
+      this.canEdit = false;
+
+      const file = this.$refs.customConfigInput.files[0];
+      // customConfigInput
+
+      var formData = new FormData();
+      formData.append("file", file);
+      console.log('posting', file)
+      this.$axios
+        .post("/api/uploadConfig", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "REDPATCH-ID": this.submission.uuid,
+          },
+        })
+        .then(({ data }) => {
+          this.$buefy.snackbar.open({
+            type: "is-danger",
+            message: `Successfully uploaded config.`,
+            queue: false,
+            actionText: null,
+          });
+
+          //TODO refresh ALL
+        })
+        .catch((err) => {
+          this.$buefy.snackbar.open({
+            type: "is-danger",
+            message: `Failed to upload config.`,
+            queue: false,
+            actionText: null,
+          });
+        })
+        .finally(() => {
+          this.canEdit = true;
+        });
+
+      //TODO upload and refresh
+    },
     onHealthyAreaChange(data) {
       this.healthy_area = data;
       this.onChange("healthy_area");
@@ -125,6 +187,7 @@ export default {
       this.scale_card = data;
       this.onChange("scale_card");
     },
+    pushCustomConfig() {},
     onChange(type) {
       this.canEdit = false;
       this.$axios
@@ -139,13 +202,11 @@ export default {
           },
         })
         .then((res) => {
-          // console.log(res.data);
           this.$buefy.snackbar.open({
-            message: `Successfully updated value to server`,
+            message: `Successfully changed config.`,
             queue: false,
             actionText: null,
           });
-          // this.refreshImage();
 
           this.refreshPreviews();
         })

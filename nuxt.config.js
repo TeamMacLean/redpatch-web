@@ -57,6 +57,7 @@ export default {
     '/api/previews': '~/api/getPreviews.js',
     '/api/postUploadStuff': '~/api/postUploadStuff.js',
     '/api/ensurepreloading': '~/api/ensurePreLoading.js',
+    '/api/uploadConfig': '~/api/uploadConfig.js'
   },
   /*
   ** Auto import components

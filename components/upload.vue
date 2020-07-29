@@ -65,7 +65,7 @@ export default {
         debug: true,
         // autoProceed: true,
         restrictions: {
-          maxFileSize: 100 * 1000000, //100mb
+          maxFileSize: 25 * 1000000, //25mb
           minNumberOfFiles: 1,
           maxNumberOfFiles: 50,
           allowedFileTypes: ["image/*"],
