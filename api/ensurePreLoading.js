@@ -21,9 +21,12 @@ export default function (req, res) {
                     if (submission) {
 
                         if (!submission.preLoading) {
-                            //START IT!
-                            console.log('stating preload')
-                            _runPreLoad(submission)
+
+                            submission.preLoading = true;
+                            submission.save()
+                            .then(()=>{
+                                //start preloading then instantly send response (let it run in bg)
+                                _runPreLoad(submission)
                                 .then(() => {
                                     console.log('DONE preload')
                                     //TODO should we do anything here?
@@ -31,15 +34,32 @@ export default function (req, res) {
                                 .catch(err => {
                                     console.error(err);
                                 })
-                            console.log('while preloading...')
-                            submission.preLoading = true;
-                            submission.save()
-                                .then(() => {
-                                    sendOutput(res, { submission })
-                                })
-                                .catch(err => {
-                                    sendOutput(res, { error: err })
-                                })
+                                sendOutput(res, { submission })
+                            })
+                            .catch(err => {
+                                sendOutput(res, { error: err })
+                            })
+
+
+                            //START IT!
+                            // console.log('stating preload')
+                            // _runPreLoad(submission)
+                            //     .then(() => {
+                            //         console.log('DONE preload')
+                            //         //TODO should we do anything here?
+                            //     })
+                            //     .catch(err => {
+                            //         console.error(err);
+                            //     })
+                            // console.log('while preloading...')
+                            // submission.preLoading = true;
+                            // submission.save()
+                            //     .then(() => {
+                            //         sendOutput(res, { submission })
+                            //     })
+                            //     .catch(err => {
+                            //         sendOutput(res, { error: err })
+                            //     })
                         } else {
                             sendOutput(res, { submission })
                         }

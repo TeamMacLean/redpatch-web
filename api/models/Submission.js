@@ -24,10 +24,18 @@ const schema = new mongoose.Schema({
         default: false,
         type: Boolean
     },
-    processes: {
-        type: Array,
-        default: []
-    }
+    leafAreaPID: {
+        type: String
+    },
+    healthyAreaPID: {
+        type: String
+    },
+    legionAreaPID: {
+        type: String
+    },
+    scaleCardPID: {
+        type: String
+    },
 }, { timestamps: true, toJSON: { virtuals: true } });
 
 

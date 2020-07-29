@@ -6,6 +6,13 @@
 * Python
 ** redpatch
 
+## .env
+
+API_URL: The URL of this site (local address)
+BASE_URL: The public URL of your site (without a trailing /)
+PYTHON: The path to your python3
+BATCH_PROCESS_PATH: The path to redpatch-batch-process
+
 ## Build Setup
 
 ```bash

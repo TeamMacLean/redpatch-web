@@ -10,7 +10,6 @@
       <GeneratingPreviews
         :submission="submission"
         @oncompletion="onPreLoadCompleting"
-        :linkBack="linkBack"
       />
     </div>
     <div v-if="showSliders">
@@ -145,13 +144,15 @@ export default {
           this.refresh();
         });
     },
-    onPreLoadCompleting() {},
-  },
-  computed: {
-    linkBack() {
-      console.log("linkBack", process.env.BASE_URL);
-      return `${process.env.BASE_URL}/${this.$route.hash}`;
+    onPreLoadCompleting() {
+      return this.refresh();
     },
   },
+  // computed: {
+  //   linkBack() {
+  //     console.log("linkBack", process.env.BASE_URL);
+  //     return `${process.env.BASE_URL}/${this.$route.hash}`;
+  //   },
+  // },
 };
 </script>

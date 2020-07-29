@@ -59,7 +59,7 @@
           :values="lesion_area"
         />
       </div>
-      <div class="column">
+      <div class="column" v-if="submission.hasScaleCard">
         <img
           :src="urls['scale_card']+ '?rnd=' + cacheKey"
           class="image outlined is-inline-block"
@@ -71,8 +71,8 @@
           :onChange="onScaleCardChange"
           title="Scale Card"
           :values="scale_card"
-        />scale size in cm input box here
-        <input type="number" min="0" max="9999" />
+        />scale size (cm)
+        <input type="number" min="1" max="9999" />
       </div>
     </div>
 
@@ -80,8 +80,8 @@
     <br />
     <br />
     <div class="buttons">
-      <b-button type="is-primary">Process all images</b-button>
-      <b-button type="is-primary">Download config</b-button>
+      <b-button type="is-primary" >Process all images</b-button>
+      <b-button type="is-primary" tag="a" :href="configDownloadURL" download="redpatch-config.yaml">Download config</b-button>
     </div>
   </section>
 </template>
@@ -177,6 +177,11 @@ export default {
   mounted() {
     this.refreshPreviews();
     // this.onChange();
+  },
+  computed: {
+    configDownloadURL() {
+      return `/uploads/${this.submission.uuid}/config.yaml`;
+    },
   },
   // computed: {
   //   url() {

@@ -26,7 +26,7 @@ export default function (req, res) {
                             submission.previewFile = submission.files[0].id
                         }
 
-                        submission.hasScaleCard = hasScaleCard;
+                        submission.hasScaleCard = !!hasScaleCard;
 
                         submission.save()
                             .then(() => {

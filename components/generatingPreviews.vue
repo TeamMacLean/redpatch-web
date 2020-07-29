@@ -2,7 +2,8 @@
   <div class="section">
     <div class="container">
       <b-notification :closable="false">
-        Please wait while we generate the previews.
+        <p class="title
+        ">Please wait while we generate the previews.</p>
         If the images are very large this can take a while.
         If you don’t want to wait, you can access this page and keep your progress using this link
         <a
@@ -16,12 +17,8 @@
 
 <script>
 export default {
-  props: ["submission", "linkBack"],
+  props: ["submission"],
   data() {
-    //TODO get the current preview status
-    //if not started, start
-    //keep polling the status
-
     return {
       polling: null,
     };
@@ -46,7 +43,9 @@ export default {
             );
 
             if (data && data.submission) {
+              console.log('has data and submission')
               if (data.submission.preLoaded) {
+                console.log('is preloaded, emitting')
                 return this.$emit("oncompletion");
               }
             }
@@ -66,5 +65,11 @@ export default {
     this.ensureLoading();
     this.pollData();
   },
+  computed:{
+    linkBack() {
+      console.log(this.submission)
+      return `${process.env.BASE_URL}/${this.submission.uuid}`;
+    },
+  }
 };
 </script>
