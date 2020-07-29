@@ -1,24 +1,31 @@
 <template>
-  <div class="container">
-    <p>//TODO: redpatch-batch-process fails without '--scale_card_side_length'</p>
-    <p>//TODO: schedule jobs</p>
-    <p>//TODO: generate 2 versions or preview images (1600 and 800)</p>
-    <div v-if="showUploader">
-      <Upload @oncompletion="onUploadCompletion" :uuid="uuid" />
+  <section class="section">
+    <div class="container">
+      <div class="notification is-danger">
+        <p>TODO: redpatch-batch-process fails without '--scale_card_side_length'</p>
+        <p>TODO: schedule jobs</p>
+        <p>TODO: generate 2 versions or preview images (1600 and 800)</p>
+      </div>
+      <div v-if="showUploader">
+        <Upload @oncompletion="onUploadCompletion" :uuid="uuid" />
+      </div>
+      <div v-if="showPicker">
+        <SelectImage :submission="submission" @oncompletion="onPickerCompletion" />
+      </div>
+      <div v-if="showPreLoading">
+        <GeneratingPreviews :submission="submission" @oncompletion="onPreLoadCompleting" />
+      </div>
+      <div v-if="showSliders">
+        <Sliders :submission="submission" @oncompletion="onSlidersCompletion" />
+      </div>
+      <div v-if="showProcessing">
+        <GeneratingProcessed :submission="submission" @oncompletion="onProcessingCompletion" />
+      </div>
+      <div v-if="showResults">
+        <Results :submission="submission" />
+      </div>
     </div>
-    <div v-if="showPicker">
-      <SelectImage :submission="submission" @oncompletion="onPickerCompletion" />
-    </div>
-    <div v-if="showPreLoading">
-      <GeneratingPreviews :submission="submission" @oncompletion="onPreLoadCompleting" />
-    </div>
-    <div v-if="showSliders">
-      <Sliders :submission="submission" @oncompletion="onSlidersCompletion" />
-    </div>
-    <div v-if="showProcessing">
-      <GeneratingProcessed :submission="submission" />
-    </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -58,10 +65,10 @@ async function _refresh(axios, uuid) {
     showUploader = false;
     if (submission.files.length === 1 || submission.previewFile) {
       if (submission.preLoaded) {
-        if (submission.processingAll) {
-          showProcessing = true;
-        } else if (submission.processedAll) {
+        if (submission.processedAll) {
           showResults = true;
+        } else if (submission.processingAll) {
+          showProcessing = true;
         } else {
           showPicker = false;
           showSliders = true;
@@ -150,6 +157,9 @@ export default {
         });
     },
     onPreLoadCompleting() {
+      return this.refresh();
+    },
+    onProcessingCompletion() {
       return this.refresh();
     },
     onSlidersCompletion() {

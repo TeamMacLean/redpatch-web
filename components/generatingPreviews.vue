@@ -1,6 +1,5 @@
 <template>
-  <div class="section">
-    <div class="container">
+    <div>
       <b-notification :closable="false">
         <p class="title
         ">Please wait while we generate the previews.</p>
@@ -12,7 +11,6 @@
       </b-notification>
       <b-progress></b-progress>
     </div>
-  </div>
 </template>
 
 <script>

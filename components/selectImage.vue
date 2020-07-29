@@ -1,8 +1,12 @@
 <template>
-  <section class="section">
+  <div>
     <div class="content">
-      <p v-if="this.submission.hasScaleCard">These are your uploaded images. Please select one with a scale card to use for parameter estimation, then press "Move on"</p>
-      <p v-if="!this.submission.hasScaleCard">These are your uploaded images. Please select one to use for parameter estimation, then press "Move on"</p>
+      <p
+        v-if="this.submission.hasScaleCard"
+      >These are your uploaded images. Please select one with a scale card to use for parameter estimation, then press "Move on"</p>
+      <p
+        v-if="!this.submission.hasScaleCard"
+      >These are your uploaded images. Please select one to use for parameter estimation, then press "Move on"</p>
     </div>
     <VueSelectImage :dataImages="images" @onselectimage="onSelectImage"></VueSelectImage>
 
@@ -12,7 +16,7 @@
     <div class="buttons">
       <b-button type="is-primary" :disabled="!canMoveOn" @click="moveOn">Move on</b-button>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>

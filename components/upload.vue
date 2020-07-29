@@ -1,5 +1,5 @@
 <template>
-  <section class="section">
+  <div>
     <p class="is-size-3">Redpatch is a tool for assessing lesion size in plant leaf images.</p>
     <br />
     <div class="is-size-5">
@@ -34,9 +34,7 @@
     <div class="buttons">
       <b-button type="is-primary" :disabled="!canMoveOn" @click="moveOn">Move on</b-button>
     </div>
-    <br />
-    <br />
-  </section>
+  </div>
 </template>
 
 <script>

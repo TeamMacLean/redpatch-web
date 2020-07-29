@@ -1,6 +1,5 @@
 <template>
-  <div class="section">
-    <div class="container">
+    <div>
       <b-notification :closable="false">
         <p class="title">Please wait while we generate the processed images.</p>If the images are very large this can take a while.
         If you don’t want to wait, you can access this page and keep your progress using this link
@@ -10,7 +9,6 @@
       </b-notification>
       <b-progress></b-progress>
     </div>
-  </div>
 </template>
 
 <script>

@@ -41,8 +41,8 @@ export default (submission) => {
                 submission.processedAll = true;
                 submission.processingPID = null;
                 submission.save()
-                    .then((test) => {
-                        good(out);
+                    .then(() => {
+                        good();
                     })
                     .catch(err => {
                         console.error('failed to save submission');

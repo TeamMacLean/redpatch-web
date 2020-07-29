@@ -1,6 +1,8 @@
 <template>
-  <div class="section">
-    <div class="container">Results here!</div>
+    <div >
+      <p>Results here!</p>
+      <p>This is disabled until TODOs fixed!</p>
+      <b-button icon-left="download" size="is-large">Add</b-button>
   </div>
 </template>
 
@@ -9,13 +11,6 @@ export default {
   props: ["submission"],
   data() {
     return {};
-  },
-  methods: {
-    computed: {
-      linkBack() {
-        return `${process.env.BASE_URL}/${this.submission.uuid}`;
-      },
-    },
   },
 };
 </script>

@@ -23,7 +23,8 @@ export default function (req, res) {
                 .then(submission => {
                     if (submission) {
 
-                        if (!submission.preLoading) {
+
+                        if (!submission.processedAll && !submission.preLoading) {
 
                             submission.preLoading = true;
                             submission.save()
@@ -50,16 +51,16 @@ export default function (req, res) {
                             //IS IT THO!?
                             const reallyRunning = isRunning(submission.processingPID);
 
-                            if(!reallyRunning){
+                            if (!reallyRunning) {
                                 //ISSUE!
                                 console.log('it wasnt really running, making it so!')
                                 _runProcessAll(submission)
-                                        .then(() => {
-                                            console.log('DONE processing')
-                                        })
-                                        .catch(err => {
-                                            console.error(err);
-                                        })
+                                    .then(() => {
+                                        console.log('DONE processing')
+                                    })
+                                    .catch(err => {
+                                        console.error(err);
+                                    })
                             }
 
                             sendOutput(res, { submission })

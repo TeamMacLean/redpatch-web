@@ -1,124 +1,123 @@
 <template>
-  <section class="section">
+  <div>
     <!-- <figure class="image outlined is-400x400"> -->
 
-    <div class="container">
-      <div class="content">
-        <p>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</p>
-        <p>If you have selected a scale card please remember to add the side length in centimetres.</p>
-        <p>Click "Process all images" to apply the settings.</p>
-        <p>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</p>
-        <p>If you have previously saved settings, upload them using "Upload config"</p>
-      </div>
-      <div class="columns">
-        <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
-        <div class="column">
-          <img
-            :src="urls['original']"
-            class="image outlined is-inline-block"
-            alt="image with filter applied"
-            style="margin-right:30px;"
-          />
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column is-6 limit800">
-          <img
-            :src="urls['leaf_area']+ '?rnd=' + cacheKey"
-            class="image outlined is-inline-block"
-            alt="image with filter applied"
-            style="margin-right:30px;"
-          />
-          <SliderSet
-            :canEdit="canEdit"
-            :onChange="onLeafAreaChange"
-            title="Leaf Area"
-            :values="leaf_area"
-          />
-        </div>
-        <div class="column is-6 limit800">
-          <img
-            :src="urls['healthy_area']+ '?rnd=' + cacheKey"
-            class="image outlined is-inline-block"
-            alt="image with filter applied"
-            style="margin-right:30px;"
-          />
-          <SliderSet
-            :canEdit="canEdit"
-            :onChange="onHealthyAreaChange"
-            title="Healthy Area"
-            :values="healthy_area"
-          />
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column is-6 limit800">
-          <img
-            :src="urls['lesion_area']+ '?rnd=' + cacheKey"
-            class="image outlined is-inline-block"
-            alt="image with filter applied"
-            style="margin-right:30px;"
-          />
-          <SliderSet
-            :canEdit="canEdit"
-            :onChange="onLesionAreaChange"
-            title="Lesion Area"
-            :values="lesion_area"
-          />
-        </div>
-        <div class="column is-6 limit800" v-if="submission.hasScaleCard">
-          <img
-            :src="urls['scale_card']+ '?rnd=' + cacheKey"
-            class="image outlined is-inline-block"
-            alt="image with filter applied"
-            style="margin-right:30px;"
-          />
-          <SliderSet
-            :canEdit="canEdit"
-            :onChange="onScaleCardChange"
-            title="Scale Card"
-            :values="scale_card"
-          />
-          <p>
-            scale size (cm):
-            <input
-              class="input is-inline"
-              type="number"
-              min="1"
-              max="9999"
-              v-model="scaleCM"
-              @change="onScaleCMChange()"
-              required
-            />
-          </p>
-        </div>
-      </div>
-
-      <br />
-      <br />
-      <br />
-      <div class="buttons">
-        <label class="upload control">
-          <a class="button is-primary">
-            <span class="icon">
-              <i class="mdi mdi-upload mdi-24px"></i>
-            </span>
-            <span>Upload config</span>
-          </a>
-          <input type="file" ref="customConfigInput" @change="onCustomConfigSelect()" />
-        </label>
-        <!-- <span class="file-name" v-if="uploadCustomConfigFile">{{ uploadCustomConfigFile.name }}</span> -->
-
-        <b-button
-          type="is-primary"
-          tag="a"
-          :href="configDownloadURL"
-          download="redpatch-config.yaml"
-        >Download config</b-button>
-        <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn">Process all images</b-button>
+    <div class="content">
+      <p>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</p>
+      <p>If you have selected a scale card please remember to add the side length in centimetres.</p>
+      <p>Click "Process all images" to apply the settings.</p>
+      <p>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</p>
+      <p>If you have previously saved settings, upload them using "Upload config"</p>
+    </div>
+    <div class="columns">
+      <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
+      <div class="column">
+        <img
+          :src="urls['original']"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
       </div>
     </div>
-  </section>
+    <div class="columns">
+      <div class="column is-6 limit800">
+        <img
+          :src="urls['leaf_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
+        <SliderSet
+          :canEdit="canEdit"
+          :onChange="onLeafAreaChange"
+          title="Leaf Area"
+          :values="leaf_area"
+        />
+      </div>
+      <div class="column is-6 limit800">
+        <img
+          :src="urls['healthy_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
+        <SliderSet
+          :canEdit="canEdit"
+          :onChange="onHealthyAreaChange"
+          title="Healthy Area"
+          :values="healthy_area"
+        />
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column is-6 limit800">
+        <img
+          :src="urls['lesion_area']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
+        <SliderSet
+          :canEdit="canEdit"
+          :onChange="onLesionAreaChange"
+          title="Lesion Area"
+          :values="lesion_area"
+        />
+      </div>
+      <div class="column is-6 limit800" v-if="submission.hasScaleCard">
+        <img
+          :src="urls['scale_card']+ '?rnd=' + cacheKey"
+          class="image outlined is-inline-block"
+          alt="image with filter applied"
+          style="margin-right:30px;"
+        />
+        <SliderSet
+          :canEdit="canEdit"
+          :onChange="onScaleCardChange"
+          title="Scale Card"
+          :values="scale_card"
+        />
+        <p>
+          scale size (cm):
+          <input
+            class="input is-inline"
+            type="number"
+            min="1"
+            max="9999"
+            v-model="scaleCM"
+            @change="onScaleCMChange()"
+            required
+          />
+        </p>
+      </div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <div class="buttons">
+      <label class="upload control">
+        <a class="button is-primary">
+          <span class="icon">
+            <i class="mdi mdi-upload mdi-24px"></i>
+          </span>
+          <span>Upload config</span>
+        </a>
+        <input type="file" ref="customConfigInput" @change="onCustomConfigSelect()" />
+      </label>
+      <!-- <span class="file-name" v-if="uploadCustomConfigFile">{{ uploadCustomConfigFile.name }}</span> -->
+
+      <b-button
+        type="is-primary"
+        tag="a"
+        :href="configDownloadURL"
+        icon-left="download"
+        download="redpatch-config.yaml"
+      >Download config</b-button>
+      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn">Process all images</b-button>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -145,14 +144,14 @@ export default {
     };
   },
   methods: {
-    async onMoveOn(){
+    async onMoveOn() {
       const res = await this.$axios.post("/api/setProcessing", {
-        submission: this.submission.id
+        submission: this.submission.id,
       });
       if (res.data && res.data.error) {
         console.error(res.data.error);
       } else {
-        this.$emit('oncompletion')
+        this.$emit("oncompletion");
       }
     },
     async onScaleCMChange() {
