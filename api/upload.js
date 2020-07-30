@@ -8,8 +8,8 @@ import Submission from './models/Submission'
 import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 
-const PREVIEW_MAX_DIMENTIONS = { width: 400, height: 400 }
-// const PREVIEW_MAX_DIMENTIONS = { width: 1600, height: 1600 }
+// const PREVIEW_MAX_DIMENTIONS = { width: 400, height: 400 }
+const PREVIEW_MAX_DIMENTIONS = { width: 1600, height: 1600 }
 
 function calculateAspectRatioFit(srcWidth, srcHeight, maxWidth, maxHeight) {
     var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
