@@ -1,11 +1,6 @@
 <template>
   <section class="section">
     <div class="container">
-      <div class="notification is-danger">
-        <p>TODO: redpatch-batch-process fails without '--scale_card_side_length'</p>
-        <p>TODO: schedule jobs</p>
-        <p>TODO: generate 2 versions or preview images (1600 and 800)</p>
-      </div>
       <div v-if="showUploader">
         <Upload @oncompletion="onUploadCompletion" :uuid="uuid" />
       </div>

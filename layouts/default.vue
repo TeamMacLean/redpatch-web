@@ -9,6 +9,7 @@
       <template slot="start">
         <nuxt-link to="/faq" class="navbar-item">FAQ</nuxt-link>
         <nuxt-link to="/credits" class="navbar-item">Credits</nuxt-link>
+        <nuxt-link to="/todo" class="navbar-item">TODO</nuxt-link>
       </template>
 
       <!-- <template slot="end">

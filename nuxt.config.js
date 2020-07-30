@@ -61,6 +61,7 @@ export default {
     '/api/setProcessing': '~/api/setProcessing.js',
     '/api/ensureProcessing': '~/api/ensureProcessing.js',
     '/api/setScaleCM': '~/api/setScaleCM.js',
+    '/api/getOutput': '~/api/getOutput.js'
   },
   /*
   ** Auto import components

@@ -115,7 +115,7 @@
         icon-left="download"
         download="redpatch-config.yaml"
       >Download config</b-button>
-      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn">Process all images</b-button>
+      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn" :loading="!canMoveOn">Process all images</b-button>
     </div>
   </div>
 </template>
@@ -141,6 +141,7 @@ export default {
       scale_card: this.submission.config.scale_card,
       urls: [],
       cacheKey: +new Date(),
+      submittingScaleCM: false,
     };
   },
   methods: {
@@ -155,6 +156,7 @@ export default {
       }
     },
     async onScaleCMChange() {
+      this.submittingScaleCM = true;
       const res = await this.$axios.post("/api/setScaleCM", {
         submission: this.submission.id,
         scaleCM: this.scaleCM,
@@ -162,6 +164,7 @@ export default {
       if (res.data && res.data.error) {
         console.error(res.data.error);
       }
+      this.submittingScaleCM = false;
     },
     onCustomConfigSelect() {
       this.canEdit = false;
@@ -291,7 +294,7 @@ export default {
   },
   computed: {
     canMoveOn() {
-      return this.scaleCM && this.scaleCM > 0;
+      return this.scaleCM && this.scaleCM > 0 && !this.submittingScaleCM;
     },
     configDownloadURL() {
       return `/uploads/${this.submission.uuid}/config.yaml`;
