@@ -43,11 +43,21 @@ function processHash(hash) {
 }
 
 async function _refresh(axios, uuid) {
+  axios.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    console.log(config)
+    return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
+  console.log(process.env.API_URL+"/api/status", uuid)
   const res = await axios.get("/api/status", {
     params: {
       uuid: uuid,
     },
   });
+  console.log(res);
   let showUploader = false;
   let showPicker = false;
   let showSliders = false;
@@ -56,6 +66,8 @@ async function _refresh(axios, uuid) {
   let showResults = false;
 
   const submission = res.data && res.data.submission;
+
+
   if (submission && submission.files) {
     showUploader = false;
     if (submission.files.length === 1 || submission.previewFile) {

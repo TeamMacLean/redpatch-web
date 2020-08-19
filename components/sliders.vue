@@ -14,9 +14,8 @@
       <div class="column">
         <img
           :src="urls['original']"
-          class="image outlined is-inline-block"
+          class="image outlined is-inline-block original-image"
           alt="image with filter applied"
-          style="margin-right:30px;"
         />
       </div>
     </div>
@@ -26,7 +25,8 @@
           :src="urls['leaf_area']+ '?rnd=' + cacheKey"
           class="image outlined is-inline-block"
           alt="image with filter applied"
-          style="margin-right:30px;"
+          style="margin-right:30px;">
+"
         />
         <SliderSet
           :canEdit="canEdit"
@@ -321,6 +321,7 @@ export default {
 </script>
 
 <style>
+
 .image.outlined {
   border: 1px solid black;
 }
@@ -341,4 +342,10 @@ export default {
   max-height: 800px;
   max-width: 800px;
 }
+
+.original-image{
+  max-height:calc(100vh - 350px);
+  margin-right:30px;
+}
+
 </style>

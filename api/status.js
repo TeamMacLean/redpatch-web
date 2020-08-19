@@ -11,7 +11,6 @@ export default function (req, res) {
 
   const uuid = queryObject && queryObject.uuid;
 
-
   if (uuid) {
     Submission.findOne({ uuid })
       .populate('files')

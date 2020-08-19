@@ -41,16 +41,16 @@ export default {
             },
           })
           .then(({ data }) => {
-            console.log(
-              "data",
-              data.submission.processingAll,
-              data.submission.processedAll
-            );
+            // console.log(
+            //   "data",
+            //   data.submission.processingAll,
+            //   data.submission.processedAll
+            // );
 
             if (data && data.submission) {
-              console.log("has data and submission");
+              // console.log("has data and submission");
               if (data.submission.processedAll) {
-                console.log("is preloaded, emitting");
+                // console.log("is preloaded, emitting");
                 return this.$emit("oncompletion");
               }
             }

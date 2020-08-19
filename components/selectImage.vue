@@ -56,3 +56,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.vue-select-image__img{
+  max-height:400px;
+  width:auto;
+}
+</style>
