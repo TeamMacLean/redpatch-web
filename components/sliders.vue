@@ -1,13 +1,21 @@
 <template>
   <div>
+    <b-modal v-model="isHelpModalActive">
+        <p>Instructions</p>
+        <ol>
+          <li>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</li>
+          <li>If you have selected a scale card please remember to add the side length in centimetres.</li>
+          <li>Click "Process all images" to apply the settings.</li>
+          <li>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</li>
+          <li>If you have previously saved settings, upload them using "Upload config"</li>
+        </ol>
+      </b-modal>
     <!-- <figure class="image outlined is-400x400"> -->
 
     <div class="content">
-      <p>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</p>
-      <p>If you have selected a scale card please remember to add the side length in centimetres.</p>
-      <p>Click "Process all images" to apply the settings.</p>
-      <p>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</p>
-      <p>If you have previously saved settings, upload them using "Upload config"</p>
+      <button class="button is-primary" @click="isHelpModalActive = true">Show Help</button>
+
+      
     </div>
     <div class="columns">
       <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
@@ -18,81 +26,76 @@
           alt="image with filter applied"
         />
       </div>
-    </div>
-    <div class="columns">
-      <div class="column is-6 limit800">
-        <img
-          :src="urls['leaf_area']+ '?rnd=' + cacheKey"
-          class="image outlined is-inline-block"
-          alt="image with filter applied"
-          style="margin-right:30px;">
-"
-        />
-        <SliderSet
-          :canEdit="canEdit"
-          :onChange="onLeafAreaChange"
-          title="Leaf Area"
-          :values="leaf_area"
-        />
-      </div>
-      <div class="column is-6 limit800">
-        <img
-          :src="urls['healthy_area']+ '?rnd=' + cacheKey"
-          class="image outlined is-inline-block"
-          alt="image with filter applied"
-          style="margin-right:30px;"
-        />
-        <SliderSet
-          :canEdit="canEdit"
-          :onChange="onHealthyAreaChange"
-          title="Healthy Area"
-          :values="healthy_area"
-        />
-      </div>
-    </div>
-    <div class="columns">
-      <div class="column is-6 limit800">
-        <img
-          :src="urls['lesion_area']+ '?rnd=' + cacheKey"
-          class="image outlined is-inline-block"
-          alt="image with filter applied"
-          style="margin-right:30px;"
-        />
-        <SliderSet
-          :canEdit="canEdit"
-          :onChange="onLesionAreaChange"
-          title="Lesion Area"
-          :values="lesion_area"
-        />
-      </div>
-      <div class="column is-6 limit800" v-if="submission.hasScaleCard">
-        <img
-          :src="urls['scale_card']+ '?rnd=' + cacheKey"
-          class="image outlined is-inline-block"
-          alt="image with filter applied"
-          style="margin-right:30px;"
-        />
-        <SliderSet
-          :canEdit="canEdit"
-          :onChange="onScaleCardChange"
-          title="Scale Card"
-          :values="scale_card"
-        />
-        <p>
-          scale size (cm):
-          <input
-            class="input is-inline"
-            type="number"
-            min="1"
-            max="9999"
-            v-model="scaleCM"
-            @change="onScaleCMChange()"
-            required
+      <div class="column">
+        <div class="leaf1" v-show="step===1">
+          <img
+            :src="urls['leaf_area']+ '?rnd=' + cacheKey"
+            class="image outlined is-inline-block filtered-image"
+            alt="image with filter applied"
           />
-        </p>
+          <SliderSet
+            :canEdit="canEdit"
+            :onChange="onLeafAreaChange"
+            title="Leaf Area"
+            :values="leaf_area"
+          />
+        </div>
+        <div class="left2" v-show="step===2">
+          <img
+            :src="urls['healthy_area']+ '?rnd=' + cacheKey"
+            class="image outlined is-inline-block filtered-image"
+            alt="image with filter applied"
+          />
+          <SliderSet
+            :canEdit="canEdit"
+            :onChange="onHealthyAreaChange"
+            title="Healthy Area"
+            :values="healthy_area"
+          />
+        </div>
+        <div class="left3" v-show="step===3">
+          <img
+            :src="urls['lesion_area']+ '?rnd=' + cacheKey"
+            class="image outlined is-inline-block filtered-image"
+            alt="image with filter applied"
+          />
+          <SliderSet
+            :canEdit="canEdit"
+            :onChange="onLesionAreaChange"
+            title="Lesion Area"
+            :values="lesion_area"
+          />
+        </div>
+        <div class="left4" v-show="step===4">
+          <img
+            :src="urls['scale_card']+ '?rnd=' + cacheKey"
+            class="image outlined is-inline-block filtered-image"
+            alt="image with filter applied"
+          />
+          <SliderSet
+            :canEdit="canEdit"
+            :onChange="onScaleCardChange"
+            title="Scale Card"
+            :values="scale_card"
+          />
+          <p>
+            scale size (cm):
+            <input
+              class="input is-inline"
+              type="number"
+              min="1"
+              max="9999"
+              v-model="scaleCM"
+              @change="onScaleCMChange()"
+              required
+            />
+          </p>
+        </div>
+      <b-button :disabled="step<2" @click="step--">&lt;</b-button>
+      <b-button :disabled="step>3" @click="step++">&gt;</b-button>
       </div>
-    </div>
 
+    </div>
     <br />
     <br />
     <br />
@@ -115,7 +118,12 @@
         icon-left="download"
         download="redpatch-config.yaml"
       >Download config</b-button>
-      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn" :loading="!canMoveOn">Process all images</b-button>
+      <b-button
+        type="is-primary"
+        :disabled="!canMoveOn"
+        @click="onMoveOn"
+
+      >Process all images</b-button>
     </div>
   </div>
 </template>
@@ -133,6 +141,8 @@ export default {
       alert("NO SUBMISSION OR CONFIG");
     }
     return {
+      step:1,
+      isHelpModalActive: true,
       scaleCM: this.submission.scaleCM,
       canEdit: true,
       healthy_area: this.submission.config.healthy_area,
@@ -321,7 +331,6 @@ export default {
 </script>
 
 <style>
-
 .image.outlined {
   border: 1px solid black;
 }
@@ -343,9 +352,11 @@ export default {
   max-width: 800px;
 }
 
-.original-image{
-  max-height:calc(100vh - 350px);
-  margin-right:30px;
+.original-image {
+  margin-right: 30px;
 }
-
+.filtered-image,
+.original-image {
+  max-height: calc(100vh - 350px);
+}
 </style>
