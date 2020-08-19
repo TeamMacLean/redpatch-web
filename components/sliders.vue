@@ -1,22 +1,17 @@
 <template>
   <div>
-    <b-modal v-model="isHelpModalActive">
-        <p>Instructions</p>
-        <ol>
-          <li>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</li>
-          <li>If you have selected a scale card please remember to add the side length in centimetres.</li>
-          <li>Click "Process all images" to apply the settings.</li>
-          <li>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</li>
-          <li>If you have previously saved settings, upload them using "Upload config"</li>
-        </ol>
-      </b-modal>
+    <div class="content">
+      <p>Instructions</p>
+      <ol>
+        <li>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</li>
+        <li>If you have selected a scale card please remember to add the side length in centimetres.</li>
+        <li>Click "Process all images" to apply the settings.</li>
+        <li>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</li>
+        <li>If you have previously saved settings, upload them using "Upload config"</li>
+      </ol>
+    </div>
     <!-- <figure class="image outlined is-400x400"> -->
 
-    <div class="content">
-      <button class="button is-primary" @click="isHelpModalActive = true">Show Help</button>
-
-      
-    </div>
     <div class="columns">
       <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
       <div class="column">
@@ -66,7 +61,7 @@
             :values="lesion_area"
           />
         </div>
-        <div class="left4" v-show="step===4">
+        <div class="left4" v-if="hasScaleCard" v-show="step===4">
           <img
             :src="urls['scale_card']+ '?rnd=' + cacheKey"
             class="image outlined is-inline-block filtered-image"
@@ -91,15 +86,16 @@
             />
           </p>
         </div>
-      <b-button :disabled="step<2" @click="step--">&lt;</b-button>
-      <b-button :disabled="step>3" @click="step++">&gt;</b-button>
+        <b-button type="is-primary" :disabled="!canGoLeft" @click="step--">&lt;</b-button>
+        <b-button type="is-primary" :disabled="!canGoRight" @click="step++">&gt;</b-button>
       </div>
-
     </div>
     <br />
     <br />
     <br />
     <div class="buttons">
+      <!-- <b-button type="is-primary" @click="isHelpModalActive = true">Show Help</b-button> -->
+
       <label class="upload control">
         <a class="button is-primary">
           <span class="icon">
@@ -118,12 +114,7 @@
         icon-left="download"
         download="redpatch-config.yaml"
       >Download config</b-button>
-      <b-button
-        type="is-primary"
-        :disabled="!canMoveOn"
-        @click="onMoveOn"
-
-      >Process all images</b-button>
+      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn">Process all images</b-button>
     </div>
   </div>
 </template>
@@ -141,7 +132,8 @@ export default {
       alert("NO SUBMISSION OR CONFIG");
     }
     return {
-      step:1,
+      step: 1,
+      isImageModalActive: false,
       isHelpModalActive: true,
       scaleCM: this.submission.scaleCM,
       canEdit: true,
@@ -303,8 +295,25 @@ export default {
     // this.onChange();
   },
   computed: {
+    hasScaleCard() {
+      return this.submission.hasScaleCard;
+    },
+    canGoRight() {
+      if (this.hasScaleCard) {
+        return this.step < 4;
+      } else {
+        return this.step < 3;
+      }
+    },
+    canGoLeft() {
+      return this.step > 1;
+    },
     canMoveOn() {
-      return this.scaleCM && this.scaleCM > 0 && !this.submittingScaleCM;
+      if (this.hasScaleCard) {
+        return this.scaleCM && this.scaleCM > 0 && !this.submittingScaleCM;
+      } else {
+        return true;
+      }
     },
     configDownloadURL() {
       return `/uploads/${this.submission.uuid}/config.yaml`;
