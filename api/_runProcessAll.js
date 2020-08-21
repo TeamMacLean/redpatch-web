@@ -16,6 +16,11 @@ export default (submission) => {
         if (submission.hasScaleCard) {
             args.push('--scale_card_side_length')
             args.push(`${submission.scaleCM}`)
+        } else {
+            // TEMP HACK
+            console.log('scale card side length of 1 has been set as a default to avoid errors')
+            args.push('--scale_card_side_length')
+            args.push(`${1}`)
         }
 
         console.log('RUNNING:')
