@@ -26,6 +26,11 @@ const DEFAULTS = {
     s: [0.14901960784313725, 1.0],
     v: [0.43529411764705883, 1.0]
   },
+  lesion_centre: {
+    h: [0.0, 0.1607843137254902],
+    s: [0.14901960784313725, 1.0],
+    v: [0.43529411764705883, 1.0]
+  },
   scale_card: {
     h: [0.61, 1.0],
     s: [0.17, 1.0],
@@ -65,6 +70,16 @@ lesion_area:
   v: !!python/tuple
     - ${config.lesion_area.v[0]}
     - ${config.lesion_area.v[1]}
+lesion_centre:
+  h: !!python/tuple
+    - ${config.lesion_centre.h[0]}
+    - ${config.lesion_centre.h[1]}
+  s: !!python/tuple
+    - ${config.lesion_centre.s[0]}
+    - ${config.lesion_centre.s[1]}
+  v: !!python/tuple
+    - ${config.lesion_centre.v[0]}
+    - ${config.lesion_centre.v[1]}
 scale_card:
   h: !!python/tuple
     - ${config.scale_card.h[0]}
