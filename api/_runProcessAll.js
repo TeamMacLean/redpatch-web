@@ -11,7 +11,7 @@ export default (submission) => {
         const fullResInputFolderPath = path.join(inputFolderPath, 'full');
         const fullResOutputFolderPath = path.join(outputFolderPath, 'full')
 
-        const args = ['--source_folder', `${fullResInputFolderPath}`, '--destination_folder', `${fullResOutputFolderPath}`, '--filter_settings', `${configPath}`]
+        const args = ['--source_folder', `${fullResInputFolderPath}`, '--destination_folder', `${fullResOutputFolderPath}`, '--filter_settings', `${configPath}`, '--create_tidy_output']
 
         if (submission.hasScaleCard) {
             args.push('--scale_card_side_length')
