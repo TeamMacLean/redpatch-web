@@ -72,14 +72,14 @@ lesion_area:
     - ${config.lesion_area.v[1]}
 lesion_centre:
   h: !!python/tuple
-    - ${config.lesion_centre.h[0]}
-    - ${config.lesion_centre.h[1]}
+    - ${DEFAULTS.lesion_centre.h[0]}
+    - ${DEFAULTS.lesion_centre.h[1]}
   s: !!python/tuple
-    - ${config.lesion_centre.s[0]}
-    - ${config.lesion_centre.s[1]}
+    - ${DEFAULTS.lesion_centre.s[0]}
+    - ${DEFAULTS.lesion_centre.s[1]}
   v: !!python/tuple
-    - ${config.lesion_centre.v[0]}
-    - ${config.lesion_centre.v[1]}
+    - ${DEFAULTS.lesion_centre.v[0]}
+    - ${DEFAULTS.lesion_centre.v[1]}
 scale_card:
   h: !!python/tuple
     - ${config.scale_card.h[0]}
