@@ -2,12 +2,14 @@ import execa from 'execa';
 import path from 'path';
 
 export default (submission) => {
-    const configPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'config.yaml')
+    let uploadsPath = path.join('.', 'uploads');
+    /* const oldU*/ uploadsPath = path.join(__dirname, '..', 'uploads')
+    const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
 
     return new Promise((good, bad) => {
 
-        const inputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'input');
-        const outputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'output');
+        const inputFolderPath = path.join(uploadsPath, submission.uuid, 'input');
+        const outputFolderPath = path.join(uploadsPath, submission.uuid, 'output');
         const fullResInputFolderPath = path.join(inputFolderPath, 'full');
         const fullResOutputFolderPath = path.join(outputFolderPath, 'full')
 

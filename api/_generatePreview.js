@@ -6,11 +6,13 @@ import { PythonShell } from 'python-shell';
 function _run(scriptPath, filePostfix, submission, PID_NAME) {
     return new Promise((good, bad) => {
 
-        const configPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'config.yaml')
+        let uploadsPath = path.join('.', 'uploads');
+        /* const oldU*/ uploadsPath = path.join(__dirname, '..', 'uploads')
+        const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
 
         //what type to run
-        const inputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'input', 'preview');
-        const outputFolderPath = path.join(__dirname, '..', 'uploads', submission.uuid, 'output', 'preview');
+        const inputFolderPath = path.join(uploadsPath, submission.uuid, 'input', 'preview');
+        const outputFolderPath = path.join(uploadsPath, submission.uuid, 'output', 'preview');
 
         const previewInputFile = path.join(inputFolderPath, submission.previewFile.filename);
         const previewOutputFile = path.join(outputFolderPath, submission.previewFile.filename) + filePostfix;
