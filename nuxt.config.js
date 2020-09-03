@@ -49,7 +49,7 @@ export default {
   plugins: [
   ],
   serverMiddleware: {
-    '/uploads': serveStatic(__dirname + '/uploads'),
+    '/uploads': serveStatic('~' + '/uploads'),
     '/api/upload': '~/api/upload.js',
     '/api/status': '~/api/status.js',
     '/api/setselected': '~/api/setSelected.js',
