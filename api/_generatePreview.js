@@ -7,7 +7,7 @@ function _run(scriptPath, filePostfix, submission, PID_NAME) {
     return new Promise((good, bad) => {
 
         let uploadsPath = path.join('.', 'uploads');
-        /* const oldU*/ uploadsPath = path.join(__dirname, '..', 'uploads')
+        /* const oldUuploadsPath = path.join(__dirname, '..', 'uploads')*/ 
         const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
 
         //what type to run

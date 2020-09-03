@@ -3,7 +3,7 @@ import path from 'path';
 
 export default (submission) => {
     let uploadsPath = path.join('.', 'uploads');
-    /* const oldU*/ uploadsPath = path.join(__dirname, '..', 'uploads')
+    /* const oldUuploadsPath = path.join(__dirname, '..', 'uploads')*/ 
     const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
 
     return new Promise((good, bad) => {
