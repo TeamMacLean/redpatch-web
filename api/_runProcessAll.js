@@ -1,29 +1,27 @@
 import execa from 'execa';
 import path from 'path';
+import File from '../api/models/File';
 
-export default (submission) => {
-    let uploadsPath = path.join('.', 'uploads');
-    /* const oldUuploadsPath = path.join(__dirname, '..', 'uploads')*/ 
-    const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
+const proceed = (submission, extraArgs = []) => {
 
     return new Promise((good, bad) => {
+
+        let uploadsPath = path.join('.', 'uploads');
+        /* const oldUuploadsPath = path.join(__dirname, '..', 'uploads')*/ 
+        const configPath = path.join(uploadsPath, submission.uuid, 'config.yaml')
 
         const inputFolderPath = path.join(uploadsPath, submission.uuid, 'input');
         const outputFolderPath = path.join(uploadsPath, submission.uuid, 'output');
         const fullResInputFolderPath = path.join(inputFolderPath, 'full');
         const fullResOutputFolderPath = path.join(outputFolderPath, 'full')
 
-        const args = ['--source_folder', `${fullResInputFolderPath}`, '--destination_folder', `${fullResOutputFolderPath}`, '--filter_settings', `${configPath}`, '--create_tidy_output']
-
-        if (submission.hasScaleCard) {
-            args.push('--scale_card_side_length')
-            args.push(`${submission.scaleCM}`)
-        } else {
-            // TEMP HACK
-            console.log('scale card side length of 1 has been set as a default to avoid errors')
-            args.push('--scale_card_side_length')
-            args.push(`${1}`)
-        }
+        const args = [
+            '--use_on_server',
+            '--source_folder', `${fullResInputFolderPath}`, 
+            '--destination_folder', `${fullResOutputFolderPath}`, 
+            '--filter_settings', `${configPath}`,
+            ...extraArgs,
+        ]
 
         console.log('RUNNING:')
         console.log(process.env.BATCH_PROCESS_PATH, args.join(' '))
@@ -74,7 +72,29 @@ export default (submission) => {
 
                 // bad(err)
             })
+        })
+}
 
-    })
+export default (submission) => {
 
+    if (submission.hasScaleCard) {
+
+        File.findById(submission.previewFile)
+        .exec()
+        .then(uploadFile => {
+            
+            let extraArgs = [];
+
+            extraArgs.push('--scale_image_name') 
+            extraArgs.push(`${uploadFile.filename}`)
+
+            extraArgs.push('--scale_card_side_length') 
+            extraArgs.push(`${submission.scaleCM}`)
+
+            return proceed(submission, extraArgs)
+        })
+
+    } else {
+        return proceed(submission, [])
+    }
 }
