@@ -1,7 +1,7 @@
-import path from 'path';
-import YAML from 'yaml';
+import path from 'path'
+import YAML from 'yaml'
 import { parseSeq, stringifyString } from 'yaml/util'
-import fs from 'fs';
+import fs from 'fs'
 
 const pythonTuple = {
   tag: 'tag:yaml.org,2002:python/tuple',
@@ -18,7 +18,7 @@ const DEFAULTS = {
   },
   leaf_area: {
     h: [0.0, 1.0],
-    s: [0.1960784313725490, 1.0],
+    s: [0.196078431372549, 1.0],
     v: [0.1568627450980392, 1.0]
   },
   lesion_area: {
@@ -36,8 +36,7 @@ const DEFAULTS = {
     s: [0.17, 1.0],
     v: [0.25, 0.75]
   }
-};
-
+}
 
 const template = function (config) {
   return `healthy_area:
@@ -100,12 +99,11 @@ function parseFile(pathToFile) {
   return new Promise((good, bad) => {
     fs.readFile(pathToFile, 'utf8', function (err, data) {
       if (err) {
-        return bad(err);
+        return bad(err)
       } else {
         return good(YAML.parse(data))
       }
-    });
-
+    })
   })
 }
 
@@ -129,11 +127,11 @@ function write(uuid, configData) {
     const writePath = getPath(uuid)
     fs.writeFile(writePath, yamlStr, 'utf8', function (err) {
       if (err) {
-        return bad(err);
+        return bad(err)
       } else {
         return good()
       }
-    });
+    })
   })
 }
 

@@ -1,22 +1,43 @@
 <template>
   <div>
-    <b-navbar type="is-primary">
-      <template slot="brand">
-        <a href="/" class="navbar-item">
-          <p class="heading is-size-6">Redpatch</p>
-        </a>
-      </template>
-      <template slot="start">
-        <nuxt-link to="/faq" class="navbar-item">FAQ</nuxt-link>
-        <nuxt-link to="/credits" class="navbar-item">Credits</nuxt-link>
-      </template>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <NuxtLink to="/" class="navbar-item">
+          <span class="heading is-size-6">Redpatch</span>
+        </NuxtLink>
 
-      <!-- <template slot="end">
-        <a class="bd-navbar-icon navbar-item has-text-black">
-          <b-icon icon="github"></b-icon>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          :class="{ 'is-active': isMenuOpen }"
+          @click="toggleMenu"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
         </a>
-      </template> -->
-    </b-navbar>
-    <nuxt />
+      </div>
+
+      <div class="navbar-menu" :class="{ 'is-active': isMenuOpen }">
+        <div class="navbar-start">
+          <NuxtLink to="/faq" class="navbar-item">FAQ</NuxtLink>
+          <NuxtLink to="/credits" class="navbar-item">Credits</NuxtLink>
+        </div>
+      </div>
+    </nav>
+
+    <slot />
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const isMenuOpen = ref(false)
+
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value
+}
+</script>

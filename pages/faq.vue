@@ -5,7 +5,12 @@
       <br />
       <div class="content">
         <p class="title is-4">Why does it take so long to process my images?</p>
-        <p>Redpatch needs to go through every pixel of your image. The bigger the image you upload the longer it takes. There isn’t a significant accuracy increase as the image size goes over about 2 Megapixels. Try reducing the size of your images if you want redpatch to work faster</p>
+        <p>
+          Redpatch needs to go through every pixel of your image. The bigger the image you upload
+          the longer it takes. There isn't a significant accuracy increase as the image size goes
+          over about 2 Megapixels. Try reducing the size of your images if you want redpatch to work
+          faster
+        </p>
       </div>
       <br />
       <div class="content">
@@ -22,7 +27,9 @@
         <p class="title is-4">Can I run redpatch on my own computer?</p>
         <p>
           Yep, redpatch is available as a Python package and batch scripts at
-          <a href="https://github.com/TeamMacLean/redpatch">https://github.com/TeamMacLean/redpatch</a>
+          <a href="https://github.com/TeamMacLean/redpatch"
+            >https://github.com/TeamMacLean/redpatch</a
+          >
         </p>
       </div>
       <br />
@@ -45,9 +52,6 @@
   </div>
 </template>
 
-<script>
-import CiteBadge from "~/components/_cite_badge";
-export default {
-  components: { CiteBadge },
-};
+<script setup lang="ts">
+// CiteBadge is auto-imported by Nuxt 3
 </script>

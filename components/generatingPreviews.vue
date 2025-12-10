@@ -1,72 +1,69 @@
 <template>
-    <div>
-      <b-notification :closable="false">
-        <p class="title
-        ">Please wait while we generate the previews.</p>
-        If the images are very large this can take a while.
-        If you don’t want to wait, you can access this page and keep your progress using this link
-        <a
-          :href="linkBack"
-        >{{linkBack}}</a>
-      </b-notification>
-      <b-progress></b-progress>
+  <div>
+    <div class="notification is-info">
+      <p class="title">Please wait while we generate the previews.</p>
+      <p>If the images are very large this can take a while.</p>
+      <p>
+        If you don't want to wait, you can access this page and keep your progress using this link:
+        <a :href="linkBack">{{ linkBack }}</a>
+      </p>
     </div>
+    <progress class="progress is-primary" max="100"></progress>
+  </div>
 </template>
 
-<script>
-export default {
-  props: ["submission"],
-  data() {
-    return {
-      polling: null,
-    };
-  },
-  methods: {
-    ensureLoading() {
-      this.$axios.post("/api/ensurepreloading", { uuid: this.submission.uuid });
-    },
-    pollData() {
-      this.polling = setInterval(() => {
-        this.$axios
-          .get("/api/status", {
-            params: {
-              uuid: this.submission.uuid,
-            },
-          })
-          .then(({ data }) => {
-            // console.log(
-            //   "data",
-            //   data.submission.preLoading,
-            //   data.submission.preLoaded
-            // );
+<script setup lang="ts">
+import { computed, onMounted, onBeforeUnmount } from 'vue'
 
-            if (data && data.submission) {
-              // console.log('has data and submission')
-              if (data.submission.preLoaded) {
-                // console.log('is preloaded, emitting')
-                return this.$emit("oncompletion");
-              }
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
+interface Submission {
+  uuid: string
+}
 
-        // this.$store.dispatch("RETRIEVE_DATA_FROM_BACKEND");
-      }, 1000);
-    },
-  },
-  beforeDestroy() {
-    clearInterval(this.polling);
-  },
-  created() {
-    this.ensureLoading();
-    this.pollData();
-  },
-  computed:{
-    linkBack() {
-      return `${process.env.BASE_URL}/#${this.submission.uuid}`;
-    },
+const props = defineProps<{
+  submission: Submission
+}>()
+
+const emit = defineEmits<{
+  oncompletion: []
+}>()
+
+const config = useRuntimeConfig()
+
+const linkBack = computed(() => `${config.public.baseUrl}/#${props.submission.uuid}`)
+
+let polling: ReturnType<typeof setInterval> | null = null
+
+async function ensureLoading() {
+  await $fetch('/api/ensurepreloading', {
+    method: 'POST',
+    body: { uuid: props.submission.uuid }
+  })
+}
+
+function pollData() {
+  polling = setInterval(async () => {
+    try {
+      const data = await $fetch<{ submission?: { preLoaded?: boolean } }>('/api/status', {
+        query: { uuid: props.submission.uuid }
+      })
+
+      if (data?.submission?.preLoaded) {
+        emit('oncompletion')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }, 1000)
+}
+
+onMounted(() => {
+  ensureLoading()
+  pollData()
+})
+
+onBeforeUnmount(() => {
+  if (polling) {
+    clearInterval(polling)
   }
-};
+})
 </script>

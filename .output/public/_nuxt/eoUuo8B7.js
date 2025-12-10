@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as n,a as r}from"./CWShXD-v.js";const s={},a={href:"https://doi.org/10.5281/zenodo.3965768",rel:"nofollow",target:"_blank"};function _(c,o){return n(),t("a",a,[...o[0]||(o[0]=[r("img",{src:"https://zenodo.org/badge/DOI/10.5281/zenodo.3965768.svg",alt:"DOI",style:{"max-width":"100%"}},null,-1)])])}const d=e(s,[["render",_]]);export{d as _};

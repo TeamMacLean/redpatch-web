@@ -1,183 +1,156 @@
 <template>
   <section class="section">
     <div class="container">
-      <div v-if="showUploader">
-        <Upload @oncompletion="onUploadCompletion" :uuid="uuid" />
+      <div v-if="showUploader && uuidReady">
+        <Upload :uuid="uuid" @oncompletion="onUploadCompletion" />
       </div>
       <div v-if="showPicker">
-        <SelectImage :submission="submission" @oncompletion="onPickerCompletion" />
+        <SelectImage :submission="submission!" @oncompletion="onPickerCompletion" />
       </div>
       <div v-if="showPreLoading">
-        <GeneratingPreviews :submission="submission" @oncompletion="onPreLoadCompleting" />
+        <GeneratingPreviews :submission="submission!" @oncompletion="onPreLoadCompleting" />
       </div>
       <div v-if="showSliders">
-        <Sliders :submission="submission" @oncompletion="onSlidersCompletion" />
+        <Sliders :submission="submission!" @oncompletion="onSlidersCompletion" />
       </div>
       <div v-if="showProcessing">
-        <GeneratingProcessed :submission="submission" @oncompletion="onProcessingCompletion" />
+        <GeneratingProcessed :submission="submission!" @oncompletion="onProcessingCompletion" />
       </div>
       <div v-if="showResults">
-        <Results :submission="submission" />
+        <Results :submission="submission!" />
       </div>
     </div>
   </section>
 </template>
 
-<script>
-import { v4 as uuidv4 } from "uuid";
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
-import Upload from "~/components/upload";
-import SelectImage from "~/components/selectImage";
-import Sliders from "~/components/sliders";
-import GeneratingPreviews from "~/components/generatingPreviews";
-import GeneratingProcessed from "~/components/generatingProcessed";
-import Results from "~/components/results";
-
-function processHash(hash) {
-  const splitted = hash.split("#");
-  if (splitted.length > 1) {
-    return splitted[1];
-  } else {
-    return null;
-  }
+interface Submission {
+  id: string
+  uuid: string
+  hasScaleCard: boolean
+  scaleCM: number
+  preLoading: boolean
+  preLoaded: boolean
+  processingAll: boolean
+  processedAll: boolean
+  previewFile: any
+  files: any[]
+  config: any
 }
 
-async function _refresh(axios, uuid) {
-  axios.interceptors.request.use(function (config) {
-    // Do something before request is sent
-    console.log(config)
-    return config;
-  }, function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  });
-  console.log(process.env.API_URL+"/api/status", uuid)
-  const res = await axios.get("/api/status", {
-    params: {
-      uuid: uuid,
-    },
-  });
-  console.log(res);
-  let showUploader = false;
-  let showPicker = false;
-  let showSliders = false;
-  let showPreLoading = false;
-  let showProcessing = false;
-  let showResults = false;
+const route = useRoute()
 
-  const submission = res.data && res.data.submission;
+const uuid = ref('')
+const uuidReady = ref(false)
+const showUploader = ref(true)
+const showPicker = ref(false)
+const showSliders = ref(false)
+const showPreLoading = ref(false)
+const showProcessing = ref(false)
+const showResults = ref(false)
+const submission = ref<Submission | null>(null)
 
+function processHash(hash: string): string | null {
+  const splitted = hash.split('#')
+  return splitted.length > 1 ? splitted[1] : null
+}
 
-  if (submission && submission.files) {
-    showUploader = false;
-    if (submission.files.length === 1 || submission.previewFile) {
-      if (submission.preLoaded) {
-        if (submission.processedAll) {
-          showResults = true;
-        } else if (submission.processingAll) {
-          showProcessing = true;
+async function refresh() {
+  const { data } = await useFetch<{ submission?: Submission }>('/api/status', {
+    query: { uuid: uuid.value }
+  })
+
+  // Reset all states
+  showUploader.value = false
+  showPicker.value = false
+  showSliders.value = false
+  showPreLoading.value = false
+  showProcessing.value = false
+  showResults.value = false
+
+  const sub = data.value?.submission
+
+  if (sub?.files && sub.files.length > 0) {
+    submission.value = sub
+
+    if (sub.files.length === 1 || sub.previewFile) {
+      if (sub.preLoaded) {
+        if (sub.processedAll) {
+          showResults.value = true
+        } else if (sub.processingAll) {
+          showProcessing.value = true
         } else {
-          showPicker = false;
-          showSliders = true;
+          showSliders.value = true
         }
       } else {
-        showPreLoading = true;
+        showPreLoading.value = true
       }
     } else {
-      showPicker = true;
+      showPicker.value = true
     }
   } else {
-    showUploader = true;
+    showUploader.value = true
   }
-
-  return {
-    uuid: uuid,
-    showUploader: showUploader,
-    showPicker: showPicker,
-    showSliders: showSliders,
-    submission: submission,
-    showPreLoading: showPreLoading,
-    showProcessing: showProcessing,
-    showResults: showResults,
-  };
 }
 
-export default {
-  components: {
-    Upload,
-    SelectImage,
-    Sliders,
-    GeneratingPreviews,
-    GeneratingProcessed,
-    Results,
-  },
-  asyncData({ $axios, route }) {
-    //TODO check for hash
-    const hash = (route && route.hash && processHash(route.hash)) || uuidv4();
-    return _refresh($axios, hash);
-  },
-  data() {
-    return {
-      loading: true,
-      showUploader: true,
-      showPicker: false,
-      showSliders: false,
-      submission: null,
-      showPreLoading: false,
-    };
-  },
-  methods: {
-    async refresh() {
-      const output = await _refresh(this.$axios, this.uuid);
-      //TODO this is pretty hacky, find a better way.
-      Object.keys(output).map((key) => {
-        this[key] = output[key];
-      });
-    },
-    async onUploadCompletion({ hasScaleCard }) {
-      //TODO post upload stuff
-      //set submission.previewFile if only one image
+async function onUploadCompletion({ hasScaleCard }: { hasScaleCard: boolean }) {
+  await $fetch('/api/postUploadStuff', {
+    method: 'POST',
+    body: {
+      uuid: uuid.value,
+      hasScaleCard
+    }
+  })
 
-      this.$axios
-        .post("/api/postUploadStuff", {
-          uuid: this.uuid,
-          hasScaleCard: hasScaleCard,
-        })
-        .then(() => {
-          history.pushState(
-            {},
-            null,
-            this.$route.path + "#" + encodeURIComponent(this.uuid)
-          );
-          return this.refresh();
-        });
-    },
-    onPickerCompletion(selected) {
-      //TODO notify API of selected image
-      return this.$axios
-        .post("/api/setselected", {
-          submission: this.submission.id,
-          file: selected.selected.id,
-        })
-        .then(() => {
-          this.refresh();
-        });
-    },
-    onPreLoadCompleting() {
-      return this.refresh();
-    },
-    onProcessingCompletion() {
-      return this.refresh();
-    },
-    onSlidersCompletion() {
-      return this.$axios
-        .post("/api/setProcessing", {
-          submission: this.submission.id,
-        })
-        .then(() => {
-          this.refresh();
-        });
-    },
-  },
-};
+  // Update URL hash
+  if (import.meta.client) {
+    history.pushState({}, '', `${route.path}#${encodeURIComponent(uuid.value)}`)
+  }
+
+  await refresh()
+}
+
+async function onPickerCompletion({ selected }: { selected: { id: string } }) {
+  await $fetch('/api/setselected', {
+    method: 'POST',
+    body: {
+      submission: submission.value!.id,
+      file: selected.id
+    }
+  })
+
+  await refresh()
+}
+
+function onPreLoadCompleting() {
+  refresh()
+}
+
+function onProcessingCompletion() {
+  refresh()
+}
+
+async function onSlidersCompletion() {
+  await $fetch('/api/setProcessing', {
+    method: 'POST',
+    body: {
+      submission: submission.value!.id
+    }
+  })
+
+  await refresh()
+}
+
+onMounted(() => {
+  // Get UUID from hash or generate new one
+  const hash = route.hash
+  uuid.value = (hash && processHash(hash)) || uuidv4()
+  uuidReady.value = true
+
+  // Initial load
+  refresh()
+})
 </script>

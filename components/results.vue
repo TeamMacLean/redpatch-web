@@ -1,38 +1,50 @@
 <template>
   <div>
     <p class="title">Results</p>
-    <!-- <p>This is disabled until TODOs fixed!</p> -->
-    <div v-if="files && files.length">
-      <div v-for="file in files">
-        <a :href="file.url" download>{{file.filename}}</a>
+    <div v-if="files && files.length" class="content">
+      <div v-for="file in files" :key="file.filename">
+        <a :href="file.url" download>{{ file.filename }}</a>
       </div>
     </div>
-    <!-- <b-button icon-left="download" size="is-large">Add</b-button> -->
+    <div v-else class="content">
+      <p>No output files found.</p>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  props: ["submission"],
-  data() {
-    return {
-      files: [],
-    };
-  },
-  mounted() {
-    this.refreshFiles();
-    // this.onChange();
-  },
-  methods: {
-    async refreshFiles() {
-      const res = await this.$axios.get("/api/getOutput", {
-        params: {
-          submission: this.submission.id,
-        },
-      });
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
 
-      this.files = res.data.files;
-    },
-  },
-};
+interface FileOutput {
+  filename: string
+  url: string
+}
+
+interface Submission {
+  id: string
+}
+
+const props = defineProps<{
+  submission: Submission
+}>()
+
+const files = ref<FileOutput[]>([])
+
+async function refreshFiles() {
+  try {
+    const data = await $fetch<{ files?: FileOutput[] }>('/api/getOutput', {
+      query: { submission: props.submission.id }
+    })
+
+    if (data?.files) {
+      files.value = data.files
+    }
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(() => {
+  refreshFiles()
+})
 </script>

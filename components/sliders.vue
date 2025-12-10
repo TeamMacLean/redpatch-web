@@ -3,369 +3,392 @@
     <div class="content">
       <p>Instructions</p>
       <ol>
-        <li>Select the HSV values to isolate the different regions in the test image. The white areas in the preview indicate the regions that will be selected.</li>
-        <li>If you have selected a scale card please remember to add the side length in centimetres.</li>
+        <li>
+          Select the HSV values to isolate the different regions in the test image. The white areas
+          in the preview indicate the regions that will be selected.
+        </li>
+        <li>
+          If you have selected a scale card please remember to add the side length in centimetres.
+        </li>
         <li>Click "Process all images" to apply the settings.</li>
-        <li>If want to save the settings to use them again or in other versions of Redpatch select "Download config".</li>
+        <li>
+          If you want to save the settings to use them again or in other versions of Redpatch select
+          "Download config".
+        </li>
         <li>If you have previously saved settings, upload them using "Upload config"</li>
       </ol>
     </div>
-    <!-- <figure class="image outlined is-400x400"> -->
 
     <div class="columns">
-      <b-loading :is-full-page="false" :active="!canEdit" :can-cancel="true"></b-loading>
+      <div v-if="!canEdit" class="loading-overlay">
+        <div class="loading-spinner"></div>
+      </div>
+
       <div class="column">
         <img
-          :src="urls['original']"
+          :src="urls.original"
           class="image outlined is-inline-block original-image"
-          alt="image with filter applied"
+          alt="Original image"
         />
       </div>
+
       <div class="column">
-        <div class="leaf1" v-show="step===1">
+        <div v-show="step === 1">
           <img
-            :src="urls['leaf_area']+ '?rnd=' + cacheKey"
+            :src="urls.leaf_area + '?rnd=' + cacheKey"
             class="image outlined is-inline-block filtered-image"
-            alt="image with filter applied"
+            alt="Leaf area filter"
           />
           <SliderSet
-            :canEdit="canEdit"
-            :onChange="onLeafAreaChange"
+            :can-edit="canEdit"
             title="Leaf Area"
             :values="leaf_area"
+            @change="onLeafAreaChange"
           />
         </div>
-        <div class="left2" v-show="step===2">
+
+        <div v-show="step === 2">
           <img
-            :src="urls['healthy_area']+ '?rnd=' + cacheKey"
+            :src="urls.healthy_area + '?rnd=' + cacheKey"
             class="image outlined is-inline-block filtered-image"
-            alt="image with filter applied"
+            alt="Healthy area filter"
           />
           <SliderSet
-            :canEdit="canEdit"
-            :onChange="onHealthyAreaChange"
+            :can-edit="canEdit"
             title="Healthy Area"
             :values="healthy_area"
+            @change="onHealthyAreaChange"
           />
         </div>
-        <div class="left3" v-show="step===3">
+
+        <div v-show="step === 3">
           <img
-            :src="urls['lesion_area']+ '?rnd=' + cacheKey"
+            :src="urls.lesion_area + '?rnd=' + cacheKey"
             class="image outlined is-inline-block filtered-image"
-            alt="image with filter applied"
+            alt="Lesion area filter"
           />
           <SliderSet
-            :canEdit="canEdit"
-            :onChange="onLesionAreaChange"
+            :can-edit="canEdit"
             title="Lesion Area"
             :values="lesion_area"
+            @change="onLesionAreaChange"
           />
         </div>
-        <div class="left4" v-if="hasScaleCard" v-show="step===4">
+
+        <div v-if="hasScaleCard" v-show="step === 4">
           <img
-            :src="urls['scale_card']+ '?rnd=' + cacheKey"
+            :src="urls.scale_card + '?rnd=' + cacheKey"
             class="image outlined is-inline-block filtered-image"
-            alt="image with filter applied"
+            alt="Scale card filter"
           />
           <SliderSet
-            :canEdit="canEdit"
-            :onChange="onScaleCardChange"
+            :can-edit="canEdit"
             title="Scale Card"
             :values="scale_card"
+            @change="onScaleCardChange"
           />
           <p>
-            scale size (cm):
+            Scale size (cm):
             <input
+              v-model.number="scaleCM"
               class="input is-inline"
               type="number"
               min="1"
               max="9999"
-              v-model="scaleCM"
-              @change="onScaleCMChange()"
               required
+              @change="onScaleCMChange"
             />
           </p>
         </div>
-        <b-button type="is-primary" :disabled="!canGoLeft" @click="step--">&lt;</b-button>
-        <b-button type="is-primary" :disabled="!canGoRight" @click="step++">&gt;</b-button>
+
+        <div class="step-buttons">
+          <button class="button is-primary" :disabled="!canGoLeft" @click="step--">&lt;</button>
+          <button class="button is-primary" :disabled="!canGoRight" @click="step++">&gt;</button>
+        </div>
       </div>
     </div>
-    <br />
-    <br />
-    <br />
+
+    <br /><br /><br />
+
     <div class="buttons">
-      <!-- <b-button type="is-primary" @click="isHelpModalActive = true">Show Help</b-button> -->
-
-      <label class="upload control">
-        <a class="button is-primary">
-          <span class="icon">
-            <i class="mdi mdi-upload mdi-24px"></i>
+      <label class="file-label">
+        <input
+          ref="customConfigInput"
+          type="file"
+          class="file-input"
+          @change="onCustomConfigSelect"
+        />
+        <span class="file-cta">
+          <span class="file-icon">
+            <i class="mdi mdi-upload"></i>
           </span>
-          <span>Upload config</span>
-        </a>
-        <input type="file" ref="customConfigInput" @change="onCustomConfigSelect()" />
+          <span class="file-label">Upload config</span>
+        </span>
       </label>
-      <!-- <span class="file-name" v-if="uploadCustomConfigFile">{{ uploadCustomConfigFile.name }}</span> -->
 
-      <b-button
-        type="is-primary"
-        tag="a"
-        :href="configDownloadURL"
-        icon-left="download"
-        download="redpatch-config.yaml"
-      >Download config</b-button>
-      <b-button type="is-primary" :disabled="!canMoveOn" @click="onMoveOn">Process all images</b-button>
+      <a class="button is-primary" :href="configDownloadURL" download="redpatch-config.yaml">
+        Download config
+      </a>
+
+      <button class="button is-primary" :disabled="!canMoveOn" @click="onMoveOn">
+        Process all images
+      </button>
     </div>
   </div>
 </template>
 
-<script>
-import path from "path";
-import SliderSet from "./_sliderSet";
+<script setup lang="ts">
+import { ref, computed } from 'vue'
 
-export default {
-  props: ["submission"],
-  components: { SliderSet },
-  data() {
-    if (!this.submission || !this.submission.config) {
-      //TODO: throw error!!!!
-      alert("NO SUBMISSION OR CONFIG");
+interface HSVValues {
+  h: [number, number]
+  s: [number, number]
+  v: [number, number]
+}
+
+interface Config {
+  healthy_area: HSVValues
+  leaf_area: HSVValues
+  lesion_area: HSVValues
+  scale_card: HSVValues
+}
+
+interface Submission {
+  id: string
+  uuid: string
+  hasScaleCard: boolean
+  scaleCM: number
+  config: Config
+}
+
+const props = defineProps<{
+  submission: Submission
+}>()
+
+const emit = defineEmits<{
+  oncompletion: []
+}>()
+
+const step = ref(1)
+const scaleCM = ref(props.submission.scaleCM)
+const canEdit = ref(true)
+const submittingScaleCM = ref(false)
+const cacheKey = ref(Date.now())
+const customConfigInput = ref<HTMLInputElement | null>(null)
+
+const urls = ref({
+  original: '',
+  healthy_area: '',
+  leaf_area: '',
+  lesion_area: '',
+  scale_card: ''
+})
+
+const healthy_area = ref<HSVValues>({
+  ...props.submission.config.healthy_area
+})
+const leaf_area = ref<HSVValues>({ ...props.submission.config.leaf_area })
+const lesion_area = ref<HSVValues>({ ...props.submission.config.lesion_area })
+const scale_card = ref<HSVValues>({ ...props.submission.config.scale_card })
+
+const hasScaleCard = computed(() => props.submission.hasScaleCard)
+const canGoRight = computed(() => (hasScaleCard.value ? step.value < 4 : step.value < 3))
+const canGoLeft = computed(() => step.value > 1)
+const canMoveOn = computed(() => {
+  if (hasScaleCard.value) {
+    return scaleCM.value > 0 && !submittingScaleCM.value
+  }
+  return true
+})
+const configDownloadURL = computed(() => `/api/uploads/${props.submission.uuid}/config.yaml`)
+
+async function onMoveOn() {
+  const { data } = await useFetch('/api/setProcessing', {
+    method: 'POST',
+    body: { submission: props.submission.id }
+  })
+
+  if (data.value && (data.value as any).error) {
+    console.error((data.value as any).error)
+  } else {
+    emit('oncompletion')
+  }
+}
+
+async function onScaleCMChange() {
+  submittingScaleCM.value = true
+  await useFetch('/api/setScaleCM', {
+    method: 'POST',
+    body: {
+      submission: props.submission.id,
+      scaleCM: scaleCM.value
     }
-    return {
-      step: 1,
-      isImageModalActive: false,
-      isHelpModalActive: true,
-      scaleCM: this.submission.scaleCM,
-      canEdit: true,
-      healthy_area: this.submission.config.healthy_area,
-      leaf_area: this.submission.config.leaf_area,
-      lesion_area: this.submission.config.lesion_area,
-      scale_card: this.submission.config.scale_card,
-      urls: [],
-      cacheKey: +new Date(),
-      submittingScaleCM: false,
-    };
-  },
-  methods: {
-    async onMoveOn() {
-      const res = await this.$axios.post("/api/setProcessing", {
-        submission: this.submission.id,
-      });
-      if (res.data && res.data.error) {
-        console.error(res.data.error);
-      } else {
-        this.$emit("oncompletion");
-      }
-    },
-    async onScaleCMChange() {
-      this.submittingScaleCM = true;
-      const res = await this.$axios.post("/api/setScaleCM", {
-        submission: this.submission.id,
-        scaleCM: this.scaleCM,
-      });
-      if (res.data && res.data.error) {
-        console.error(res.data.error);
-      }
-      this.submittingScaleCM = false;
-    },
-    onCustomConfigSelect() {
-      this.canEdit = false;
+  })
+  submittingScaleCM.value = false
+}
 
-      const file = this.$refs.customConfigInput.files[0];
-      // customConfigInput
+async function onCustomConfigSelect() {
+  if (!customConfigInput.value?.files?.[0]) return
 
-      var formData = new FormData();
-      formData.append("file", file);
-      this.$axios
-        .post("/api/uploadConfig", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            "REDPATCH-ID": this.submission.uuid,
-          },
-        })
-        .then(({ data }) => {
-          this.$buefy.snackbar.open({
-            type: "is-danger",
-            message: `Successfully uploaded config.`,
-            queue: false,
-            actionText: null,
-          });
-        })
-        .catch((err) => {
-          this.$buefy.snackbar.open({
-            type: "is-danger",
-            message: `Failed to upload config.`,
-            queue: false,
-            actionText: null,
-          });
-        })
-        .finally(() => {
-          this.refreshSliders();
-          this.refreshPreviews();
-          this.canEdit = true;
-        });
+  canEdit.value = false
+  const file = customConfigInput.value.files[0]
+  const formData = new FormData()
+  formData.append('file', file)
 
-      //TODO upload and refresh
-    },
-    onHealthyAreaChange(data) {
-      this.healthy_area = data;
-      this.onChange("healthy_area");
-    },
-    onLeafAreaChange(data) {
-      this.leaf_area = data;
-      this.onChange("leaf_area");
-    },
-    onLesionAreaChange(data) {
-      this.lesion_area = data;
-      this.onChange("lesion_area");
-    },
-    onScaleCardChange(data) {
-      this.scale_card = data;
-      this.onChange("scale_card");
-    },
-    onChange(type) {
-      this.canEdit = false;
-      this.$axios
-        .post("/api/updatehsv", {
-          type: type,
-          submission: this.submission.id,
-          config: {
-            healthy_area: this.healthy_area,
-            leaf_area: this.leaf_area,
-            lesion_area: this.lesion_area,
-            scale_card: this.scale_card,
-          },
-        })
-        .then((res) => {
-          this.$buefy.snackbar.open({
-            message: `Successfully changed config.`,
-            queue: false,
-            actionText: null,
-          });
-        })
-        .catch((err) => {
-          console.error("err");
-          this.$buefy.toast.open({
-            duration: 5000,
-            message: err,
-            position: "is-top",
-            type: "is-danger",
-          });
-        })
-        .finally(() => {
-          // this.refreshSliders();
-          this.refreshPreviews();
-          this.canEdit = true;
-        });
-    },
-    async refreshPreviews() {
-      const res = await this.$axios.get("/api/previews", {
-        params: {
-          uuid: this.submission.uuid,
-        },
-      });
-
-      this.urls = res.data.urls;
-
-      this.cacheKey = +new Date();
-    },
-    async refreshSliders() {
-      const res = await this.$axios.get("/api/status", {
-        params: {
-          uuid: this.submission.uuid,
-        },
-      });
-      if (
-        res &&
-        res.data &&
-        res.data.submission &&
-        res.data.submission.config
-      ) {
-        this.healthy_area = res.data.submission.config.healthy_area;
-        this.leaf_area = res.data.submission.config.leaf_area;
-        this.lesion_area = res.data.submission.config.lesion_area;
-        this.scale_card = res.data.submission.config.scale_card;
-      } else {
-        console.error("failed to get status, submission object");
+  try {
+    await $fetch('/api/uploadConfig', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'REDPATCH-ID': props.submission.uuid
       }
-    },
-  },
-  mounted() {
-    this.refreshPreviews();
-    // this.onChange();
-  },
-  computed: {
-    hasScaleCard() {
-      return this.submission.hasScaleCard;
-    },
-    canGoRight() {
-      if (this.hasScaleCard) {
-        return this.step < 4;
-      } else {
-        return this.step < 3;
+    })
+    alert('Successfully uploaded config.')
+  } catch (err) {
+    alert('Failed to upload config.')
+    console.error(err)
+  } finally {
+    await refreshSliders()
+    await refreshPreviews()
+    canEdit.value = true
+  }
+}
+
+function onHealthyAreaChange(data: HSVValues) {
+  healthy_area.value = data
+  onChange('healthy_area')
+}
+
+function onLeafAreaChange(data: HSVValues) {
+  leaf_area.value = data
+  onChange('leaf_area')
+}
+
+function onLesionAreaChange(data: HSVValues) {
+  lesion_area.value = data
+  onChange('lesion_area')
+}
+
+function onScaleCardChange(data: HSVValues) {
+  scale_card.value = data
+  onChange('scale_card')
+}
+
+async function onChange(type: string) {
+  canEdit.value = false
+
+  try {
+    await $fetch('/api/updatehsv', {
+      method: 'POST',
+      body: {
+        type,
+        submission: props.submission.id,
+        config: {
+          healthy_area: healthy_area.value,
+          leaf_area: leaf_area.value,
+          lesion_area: lesion_area.value,
+          scale_card: scale_card.value
+        }
       }
-    },
-    canGoLeft() {
-      return this.step > 1;
-    },
-    canMoveOn() {
-      if (this.hasScaleCard) {
-        return this.scaleCM && this.scaleCM > 0 && !this.submittingScaleCM;
-      } else {
-        return true;
-      }
-    },
-    configDownloadURL() {
-      return `/uploads/${this.submission.uuid}/config.yaml`;
-    },
-  },
-  // computed: {
-  //   url() {
-  //     let file = null;
-  //     //get image
-  //     if (this.submission.previewFile) {
-  //       file = this.submission.previewFile;
-  //     } else {
-  //       file = this.submission.files[0];
-  //     }
-  //     const root = "/";
-  //     return (
-  //       path.join(root, file.destination, "..", "preview", file.filename) +
-  //       "?rnd=" +
-  //       this.cacheKey
-  //     );
-  //   }
-  // }
-};
+    })
+  } catch (err) {
+    console.error('Error updating HSV:', err)
+  } finally {
+    await refreshPreviews()
+    canEdit.value = true
+  }
+}
+
+async function refreshPreviews() {
+  const { data } = await useFetch('/api/previews', {
+    query: { uuid: props.submission.uuid }
+  })
+
+  if (data.value && (data.value as any).urls) {
+    urls.value = (data.value as any).urls
+  }
+  cacheKey.value = Date.now()
+}
+
+async function refreshSliders() {
+  const { data } = await useFetch('/api/status', {
+    query: { uuid: props.submission.uuid }
+  })
+
+  const submission = (data.value as any)?.submission
+  if (submission?.config) {
+    healthy_area.value = submission.config.healthy_area
+    leaf_area.value = submission.config.leaf_area
+    lesion_area.value = submission.config.lesion_area
+    scale_card.value = submission.config.scale_card
+  }
+}
+
+// Initial load
+onMounted(() => {
+  refreshPreviews()
+})
 </script>
 
-<style>
+<style scoped>
 .image.outlined {
   border: 1px solid black;
-}
-.image.is-400x400 {
-  height: 400px;
-  width: 400px;
-}
-.image.is-400x200 img {
-  max-width: 400px;
-  max-height: 400px;
 }
 
 .is-inline-block {
   display: inline-block !important;
 }
 
-.limit800 img {
-  max-height: 800px;
-  max-width: 800px;
-}
-
 .original-image {
   margin-right: 30px;
 }
+
 .filtered-image,
 .original-image {
   max-height: calc(100vh - 350px);
+}
+
+.step-buttons {
+  margin-top: 1rem;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3273dc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.columns {
+  position: relative;
+}
+
+.input.is-inline {
+  width: 100px;
+  display: inline-block;
 }
 </style>
